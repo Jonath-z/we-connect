@@ -1,0 +1,10 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.landing-vector-bg {
+  background-image: url("../components/assets/landing-bg.png");
+  background-repeat: no-repeat;
+  background-position: top;
+  background-size: contain;
+}
