@@ -2,7 +2,7 @@
 import type { NextPage } from "next";
 import AuthPage from "../components/AuthPage";
 
-const Home: NextPage = () => {
+const Auth: NextPage = () => {
   return (
     <>
       <AuthPage />
@@ -10,4 +10,4 @@ const Home: NextPage = () => {
   );
 };
 
-export default Home;
+export default Auth;
