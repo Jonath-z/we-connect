@@ -36,9 +36,9 @@ const ContactCard = ({ contact, lastMessage }: IProps) => {
       <img
         src={userAvatartUrl}
         alt={username}
-        className="w-16 h-16 object-cover rounded-full"
+        className="w-14 h-14 object-cover rounded-full"
       />
-      <div className="flex justify-between w-full px-5">
+      <div className="flex justify-between w-full px-2">
         <div>
           <p>{username}</p>
           <p className="text-xs pt-1 text-gray-500">{message}</p>

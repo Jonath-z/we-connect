@@ -1,5 +1,5 @@
 import React, { ChangeEventHandler, useState } from "react";
-import { VClose, VMenu } from "../_modules/vectors";
+import { VClose, VMenu, VSearch } from "../_modules/vectors";
 
 const Header = () => {
   const [searchFocused, setSearchFocused] = useState(false);
@@ -19,11 +19,15 @@ const Header = () => {
     setSearchValue(value);
   };
   return (
-    <div className="flex justify-center items-center">
+    <div className="flex justify-center mobilemd:justify-between items-center">
       <div className="cursor-pointer">
-        <VMenu className="text-3xl text-black" />
+        <VMenu className="text-3xl text-black mobilemd:hidden" />
+        <p className="hidden mobilemd:block font-bold">We connect</p>
       </div>
-      <div className="w-full flex bg-gray-100 mx-5 py-1 px-3  items-center">
+      <div className="hidden mobilemd:block">
+        <VSearch />
+      </div>
+      <div className="w-full flex bg-gray-100 mx-5 py-1 px-3  items-center mobilemd:hidden">
         <input
           onFocus={onInputSeachFocus}
           onBlur={onInputSearchBlur}
