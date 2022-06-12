@@ -51,7 +51,7 @@ const Login = ({ onClickBack }: IProps) => {
       >
         <div className="bg-primary flex flex-col justify-center items-center mobilesm:items-stretch bg-opacity-30 backdrop-blur-md p-20 mobilemd:p-5 mobilesm:w-full mobile:my-10 mobilemd:bg-dark rounded-lg shadow-lg border border-light border-opacity-30 transition-all">
           <div>
-            <h2 className="text-light text-5xl py-5">Login with</h2>
+            <h2 className="text-light text-5xl py-5">Join with</h2>
             <button className="text-light bg-blue-600 w-96 mobilesm:w-full py-3 my-2 rounded-md flex justify-center items-center">
               <Vfacebook className="mx-5" />
               Facebook
