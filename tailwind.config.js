@@ -15,6 +15,7 @@ module.exports = {
     extend: {
       fontFamily: {
         ibmPlexSans: ['"IBM Plex Sans"', "sans-serif"],
+        poppins: ["Poppins", "sans-serif"],
       },
       screens: {
         mobile: { max: "1024px" },

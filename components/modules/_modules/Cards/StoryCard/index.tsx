@@ -8,11 +8,11 @@ interface IProps {
 
 const StoryCard = ({ storyUrl, children }: IProps) => {
   return (
-    <div>
+    <div className="border-primary border-2 p-1 w-fit rounded-full">
       <img
         src={storyUrl}
         alt="story"
-        className="w-16 h-16 rounded-full object-cover"
+        className="w-14 h-14 rounded-full object-cover"
       />
       {children}
     </div>

@@ -40,7 +40,7 @@ const ContactCard = ({ contact, lastMessage }: IProps) => {
       />
       <div className="flex justify-between w-full px-2">
         <div>
-          <p>{username}</p>
+          <p className="font-bold text-dark">{username}</p>
           <p className="text-xs pt-1 text-gray-500">{message}</p>
         </div>
         {status.viewed ? (

@@ -3,8 +3,10 @@ import { VChat, VContact, VContactBook, VPhone } from "../_modules/vectors";
 
 const BottomNav = () => {
   return (
-    <div className="fixed w-full m-auto bottom-5 justify-center items-center hidden mobile:flex">
-      <ul className="flex justify-around items-center bg-dark text-light py-2 px-3 w-3/4 rounded-3xl shadow-lg">
+    <div className="fixed w-full m-auto bottom-5 justify-center items-center hidden mobile:flex ">
+      <ul
+        className={`flex justify-around border border-light border-opacity-40 bg-dark text-light items-center py-2 px-3 w-3/4 rounded-3xl shadow-lg`}
+      >
         <li className="flex flex-col  justify-center items-center">
           <VChat />
           <span className="text-xs py-1">Chat</span>
