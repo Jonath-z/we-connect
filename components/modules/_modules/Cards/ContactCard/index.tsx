@@ -25,12 +25,13 @@ type LastMessage = {
 
 interface IProps {
   contact: Contact;
-  lastMessage: LastMessage;
+  lastMessage?: LastMessage;
+  showMessageCheck?: boolean;
 }
 
-const ContactCard = ({ contact, lastMessage }: IProps) => {
+const ContactCard = ({ contact, lastMessage, showMessageCheck }: IProps) => {
   const { username, userAvatartUrl } = contact;
-  const { message, status } = lastMessage;
+
   return (
     <div className="flex items-center hover:bg-white py-1 px-1 rounded-md cursor-pointer transition-all">
       <img
@@ -41,13 +42,14 @@ const ContactCard = ({ contact, lastMessage }: IProps) => {
       <div className="flex justify-between w-full px-2">
         <div>
           <p className="font-bold text-dark text-sm">{username}</p>
-          <p className="text-xs pt-1 text-gray-500">{message}</p>
+          <p className="text-xs pt-1 text-gray-500">{lastMessage?.message}</p>
         </div>
-        {status.viewed ? (
-          <VDoubleCheck className="text-green-500" />
-        ) : (
-          <VCheck />
-        )}
+        {showMessageCheck &&
+          (lastMessage?.status.viewed ? (
+            <VDoubleCheck className="text-green-500" />
+          ) : (
+            <VCheck />
+          ))}
       </div>
     </div>
   );

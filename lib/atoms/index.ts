@@ -5,4 +5,14 @@ const showChatAtom = atom({
   default: false,
 });
 
-export { showChatAtom };
+const bottomNavAtom = atom({
+  key: "bottomNavAtom",
+  default: {
+    chat: true,
+    contact: false,
+    calls: false,
+    profile: false,
+  },
+});
+
+export { showChatAtom, bottomNavAtom };

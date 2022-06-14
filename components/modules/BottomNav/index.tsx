@@ -1,13 +1,10 @@
+import { bottomNavAtom } from "lib/atoms";
 import React, { useState } from "react";
+import { useRecoilState } from "recoil";
 import { VChat, VContact, VContactBook, VPhone } from "../_modules/vectors";
 
 const BottomNav = () => {
-  const [selectedOption, setSelectedOption] = useState({
-    chat: true,
-    contact: false,
-    calls: false,
-    profile: false,
-  });
+  const [selectedOption, setSelectedOption] = useRecoilState(bottomNavAtom);
 
   const onSelectOption = (option: string) => {
     switch (option) {
