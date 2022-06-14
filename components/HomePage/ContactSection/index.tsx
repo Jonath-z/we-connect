@@ -27,7 +27,7 @@ const ContactSection = () => {
       </div>
       <div className="fixed w-full flex flex-col max-h-full overflow-y-auto my-16">
         <div className="flex justify-between pt-2 items-center md:hidden px-2 text-light">
-          <h2 className="text-3xl font-bold">Story</h2>
+          <h2 className="text-3xl font-bold">Stories</h2>
           <button className="text-xs" onClick={toggleSeeAll}>
             {isSeeAll ? "See less" : "See All"}
           </button>

@@ -1,5 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
 import {
+  VArrowLeft,
   VDotVerticalMenu,
   VPhone,
   VSearch,
@@ -13,6 +14,7 @@ interface IProps {
   username: string;
   online: boolean;
   lastConnexion: string;
+  onRedirectToChat: () => void;
 }
 
 const ChatHeader = ({
@@ -20,11 +22,18 @@ const ChatHeader = ({
   username,
   online,
   lastConnexion,
+  onRedirectToChat,
 }: IProps) => {
   return (
-    <div className="py-5 bg-light fixed right-0 w-3/5 pr-5">
-      <div className="flex justify-between items-center bg-white px-5 py-1 rounded-md">
+    <div className="py-5 bg-light fixed right-0 w-3/5 pr-5 mobile:p-0 mobile:w-full">
+      <div className="flex justify-between items-center bg-white px-5 mobile:px-1 py-1 rounded-md mobile:rounded-none">
         <div className="flex items-center">
+          <button
+            onClick={onRedirectToChat}
+            className="hidden mobile:block px-2"
+          >
+            <VArrowLeft />
+          </button>
           <div className="relative">
             <img
               src={userAvatarUrl}

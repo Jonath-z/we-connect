@@ -20,7 +20,7 @@ const MessageCard = ({ messages }: IProps) => {
   const { id } = user;
   return (
     <div
-      className={`my-2 py-2 px-5 w-fit max-w-xl mobile:max-w-sm transition-all break-words flex flex-col ${
+      className={`my-2 py-2 px-5 w-fit max-w-xl mobile:max-w-[90%] transition-all break-words flex flex-col ${
         id === senderId
           ? "bg-white rounded-t-xl rounded-br-xl"
           : "bg-dark text-light ml-auto  rounded-t-xl rounded-bl-xl"

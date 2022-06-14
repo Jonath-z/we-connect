@@ -11,7 +11,11 @@ import MessageCard from "components/modules/_modules/Cards/MessageCard";
 import { onlineMarker } from "components/static";
 import ChatHeader from "./ChatHeader";
 
-const ChatSection = () => {
+interface IProps {
+  onRedirectToChat: () => void;
+}
+
+const ChatSection = ({ onRedirectToChat }: IProps) => {
   const { allMessages, userAvatarUrl, username, lastConnexion, online } = user;
   return (
     <div className="flex flex-col">
@@ -20,8 +24,9 @@ const ChatSection = () => {
         username={username}
         lastConnexion={lastConnexion}
         online={online}
+        onRedirectToChat={onRedirectToChat}
       />
-      <div className="mx-auto flex flex-col w-full py-24">
+      <div className="mx-auto flex flex-col w-full py-24 mobile:bg-light mobile:px-2">
         {allMessages.map((message, index) => {
           return (
             <div key={index}>
