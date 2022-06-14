@@ -10,6 +10,7 @@ import {
 import MessageCard from "components/modules/_modules/Cards/MessageCard";
 import { onlineMarker } from "components/static";
 import ChatHeader from "./ChatHeader";
+import InputMessage from "components/modules/InputMessage";
 
 interface IProps {
   onRedirectToChat: () => void;
@@ -36,6 +37,7 @@ const ChatSection = ({ onRedirectToChat }: IProps) => {
           );
         })}
       </div>
+      <InputMessage />
     </div>
   );
 };

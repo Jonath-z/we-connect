@@ -1,13 +1,12 @@
 import Header from "components/modules/Header";
 import React, { useState } from "react";
-import { user } from "components/assets/dummy_data/user";
-import ContactCard from "components/modules/_modules/Cards/ContactCard";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { bottomNavAtom, showChatAtom } from "lib/atoms";
 import BottomNav from "components/modules/BottomNav";
-import Stories from "./_modules/Strories";
-import Chats from "./_modules/Chats";
-import Contacts from "./_modules/Contacts";
+import Stories from "../../modules/Strories";
+import Chats from "../../modules/Chats";
+import Contacts from "../../modules/Contacts";
+import Calls from "components/modules/Calls";
 
 const ContactSection = () => {
   const [isChatShowed, setIsChatShowed] = useRecoilState(showChatAtom);
@@ -61,6 +60,8 @@ const ContactSection = () => {
         <Chats onShowChat={onShowChat} isSeeAll={isSeeAll} />
       )}
       {bottomNavSelectedOption.contact && <Contacts onShowChat={onShowChat} />}
+
+      {bottomNavSelectedOption.calls && <Calls onShowChat={onShowChat} />}
       <div className={`${isSeeAll && "hidden"}`}>
         <BottomNav />
       </div>

@@ -145,6 +145,24 @@ export const user = {
       allowReaction: true,
     },
   ],
+  calls: [
+    {
+      username: "John Doe",
+      userAvatarUrl:
+        "https://static1.makeuseofimages.com/wordpress/wp-content/uploads/2022/03/bored-ape-nft.jpg",
+      Date: "2022-10-2",
+      time: "10h5 am",
+      missed: true,
+    },
+    {
+      username: "John Doe",
+      userAvatarUrl:
+        "https://static1.makeuseofimages.com/wordpress/wp-content/uploads/2022/03/bored-ape-nft.jpg",
+      Date: "2022-10-2",
+      time: "10h5 am",
+      missed: false,
+    },
+  ],
   contacts: [
     {
       id: "zizou-weconnect-23",

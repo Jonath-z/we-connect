@@ -7,7 +7,7 @@ type Contact = {
   id: string;
   username: string;
   userAvatartUrl: string;
-  userCoverUrl: string;
+  userCoverUrl?: string;
 };
 
 type LastMessage = {
