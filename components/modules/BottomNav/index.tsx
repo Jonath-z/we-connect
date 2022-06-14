@@ -1,27 +1,99 @@
-import React from "react";
+import React, { useState } from "react";
 import { VChat, VContact, VContactBook, VPhone } from "../_modules/vectors";
 
 const BottomNav = () => {
+  const [selectedOption, setSelectedOption] = useState({
+    chat: true,
+    contact: false,
+    calls: false,
+    profile: false,
+  });
+
+  const onSelectOption = (option: string) => {
+    switch (option) {
+      case "chat":
+        setSelectedOption({
+          chat: true,
+          contact: false,
+          calls: false,
+          profile: false,
+        });
+        break;
+      case "contact":
+        setSelectedOption({
+          chat: false,
+          contact: true,
+          calls: false,
+          profile: false,
+        });
+        break;
+      case "calls":
+        setSelectedOption({
+          chat: false,
+          contact: false,
+          calls: true,
+          profile: false,
+        });
+        break;
+      case "profile":
+        setSelectedOption({
+          chat: false,
+          contact: false,
+          calls: false,
+          profile: true,
+        });
+        break;
+    }
+  };
+
   return (
     <div className="fixed w-full m-auto bottom-5 justify-center items-center hidden mobile:flex ">
-      <ul
-        className={`flex justify-around border border-light border-opacity-40 bg-dark text-light items-center py-2 px-3 w-3/4 rounded-3xl shadow-lg`}
-      >
-        <li className="flex flex-col  justify-center items-center">
-          <VChat />
-          <span className="text-xs py-1">Chat</span>
+      <ul className="flex justify-around border border-light border-opacity-40 bg-dark text-light items-center py-2 px-3 w-3/4 rounded-3xl shadow-lg">
+        <li
+          onClick={() => onSelectOption("chat")}
+          className={`flex transition-all ${
+            selectedOption.chat
+              ? "bg-light text-dark px-3 py-1 rounded-xl"
+              : "flex-col"
+          } justify-center items-center`}
+        >
+          <span>
+            <VChat />
+          </span>
+          <span className="text-xs py-1 px-1">Chat</span>
         </li>
-        <li className="flex flex-col  justify-center items-center">
+        <li
+          onClick={() => onSelectOption("contact")}
+          className={`flex transition-all justify-center items-center  ${
+            selectedOption.contact
+              ? "bg-light text-dark px-3 py-1 rounded-xl"
+              : "flex-col"
+          }`}
+        >
           <VContactBook />
-          <span className="text-xs py-1">Contacts</span>
+          <span className="text-xs py-1 px-1">Contacts</span>
         </li>
-        <li className="flex flex-col  justify-center items-center">
+        <li
+          onClick={() => onSelectOption("calls")}
+          className={`flex justify-center items-center transition-all ${
+            selectedOption.calls
+              ? "bg-light text-dark px-3 py-1 rounded-xl"
+              : "flex-col"
+          }`}
+        >
           <VPhone />
-          <span className="text-xs py-1">Calls</span>
+          <span className="text-xs py-1 px-1">Calls</span>
         </li>
-        <li className="flex flex-col  justify-center items-center">
+        <li
+          onClick={() => onSelectOption("profile")}
+          className={`flex justify-center items-center transition-all ${
+            selectedOption.profile
+              ? "bg-light text-dark px-3 py-1 rounded-xl"
+              : "flex-col"
+          }`}
+        >
           <VContact />
-          <span className="text-xs py-1">Profile</span>
+          <span className="text-xs py-1 px-1">Profile</span>
         </li>
       </ul>
     </div>
