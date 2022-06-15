@@ -79,11 +79,6 @@ const ContactSection = () => {
                 "https://static1.makeuseofimages.com/wordpress/wp-content/uploads/2022/03/bored-ape-nft.jpg",
               storyDescription: "This is we connect story",
             },
-            {
-              storyUrl:
-                "https://static1.makeuseofimages.com/wordpress/wp-content/uploads/2022/03/bored-ape-nft.jpg",
-              storyDescription: "This is we connect story  second story",
-            },
           ]}
           toggleStoryView={toggleStoryView}
         />

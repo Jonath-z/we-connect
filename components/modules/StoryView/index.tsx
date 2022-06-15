@@ -36,27 +36,26 @@ const Storyview = ({ story, toggleStoryView }: IProps) => {
     }
   }, [currentStoryIndex, progressRef]);
 
+  console.log("current story index", currentStoryIndex);
+
+  useEffect(() => {
+    handleStatusDuration();
+  }, [handleStatusDuration]);
+
   useEffect(() => {
     const callback = () => {
-      if (storyIndex.current === story.length) {
+      if (storyIndex.current === story.length - 1) {
         storyIndex.current = 0;
+        setCurrentStoryIndex(0);
         clearTimeout(timer);
+        toggleStoryView();
       }
       storyIndex.current++;
       setCurrentStoryIndex(storyIndex.current);
     };
-
     const timer = setTimeout(callback, 5000);
-    handleStatusDuration();
-
     return () => clearTimeout(timer);
-  }, [
-    handleStatusDuration,
-    progressRef,
-    story.length,
-    toggleStoryView,
-    currentStoryIndex,
-  ]);
+  }, [progressRef, story.length, toggleStoryView, currentStoryIndex]);
 
   useEffect(() => {
     setProgressRef((progressRef) =>
@@ -74,14 +73,17 @@ const Storyview = ({ story, toggleStoryView }: IProps) => {
       >
         <VClose />
       </p>
-      <div className="z-20 fixed bg-dark top-0 w-full text-center p-1 m-0 bg-opacity-50 backdrop-blur-md text-xs cursor-pointer">
+      <div className="z-20 fixed bg-dark top-0 w-full text-center p-1 m-0 bg-opacity-20 backdrop-blur-md text-xs cursor-pointer">
         <div className="flex">
           {story.map((_, index) => {
             return (
-              <div key={index} className="w-full mx-1 rounded-full">
+              <div
+                key={index}
+                className="w-full mx-1 rounded-full bg-primary bg-opacity-50"
+              >
                 <div
                   ref={progressRef[index]}
-                  className="h-1 bg-primary rounded-full"
+                  className="h-1 bg-primary rounded-full w-0"
                 />
               </div>
             );
