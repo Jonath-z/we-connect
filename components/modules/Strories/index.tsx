@@ -1,13 +1,18 @@
-import React from "react";
+import React, { useState } from "react";
 import { user } from "components/assets/dummy_data/user";
 import StoryCard from "components/modules/_modules/Cards/StoryCard";
+import Storyview from "../StoryView";
 
 interface IProps {
   isSeeAll: boolean;
+  toggleStoryView: () => void;
 }
 
-const Stories = ({ isSeeAll }: IProps) => {
+const Stories = ({ isSeeAll, toggleStoryView }: IProps) => {
+  const [isStoryView, setIsStoryView] = useState(false);
+
   const { stories, username } = user;
+
   return (
     <div className="bg-dark">
       <div
@@ -18,6 +23,9 @@ const Stories = ({ isSeeAll }: IProps) => {
         {stories.map((story, index) => {
           return (
             <div
+              onClick={toggleStoryView}
+              role="button"
+              onKeyDown={() => null}
               key={index}
               className={`mx-2 relative flex ${
                 isSeeAll

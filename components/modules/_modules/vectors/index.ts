@@ -8,21 +8,29 @@ import {
   BsChatSquareDotsFill as VChat,
   BsDot as VDot,
   BsCamera as VCamera,
+  BsShopWindow as VShop,
 } from "react-icons/bs";
 import {
   MdOutlineMailOutline as VEmail,
   MdClose as VClose,
 } from "react-icons/md";
-import { FcMenu as VMenu } from "react-icons/fc";
+
 import { AiOutlineSearch as VSearch } from "react-icons/ai";
 import { HiPhone as VPhone, HiOutlinePlusSm as VPlus } from "react-icons/hi";
-import { BiDotsVerticalRounded as VDotVerticalMenu } from "react-icons/bi";
+import {
+  BiDotsVerticalRounded as VDotVerticalMenu,
+  BiTrashAlt as VTrash,
+} from "react-icons/bi";
 import {
   RiContactsBook2Fill as VContactBook,
   RiSendPlaneFill as VSendPannel,
 } from "react-icons/ri";
 import { IoMdContact as VContact } from "react-icons/io";
-import { IoLinkSharp as VLink } from "react-icons/io5";
+import {
+  IoLinkSharp as VLink,
+  IoColorFillOutline as VColor,
+} from "react-icons/io5";
+import { AiOutlineMenu as VMenu } from "react-icons/ai";
 
 export {
   WeConnectVector,
@@ -45,4 +53,7 @@ export {
   VCamera,
   VLink,
   VSendPannel,
+  VColor,
+  VTrash,
+  VShop,
 };

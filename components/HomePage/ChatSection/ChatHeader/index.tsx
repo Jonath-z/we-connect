@@ -1,6 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 import {
   VArrowLeft,
+  VClose,
   VDotVerticalMenu,
   VPhone,
   VSearch,
@@ -14,7 +15,9 @@ interface IProps {
   username: string;
   online: boolean;
   lastConnexion: string;
+  isChatMenuVisible: boolean;
   onRedirectToChat: () => void;
+  onToggleChatMenu: () => void;
 }
 
 const ChatHeader = ({
@@ -22,7 +25,9 @@ const ChatHeader = ({
   username,
   online,
   lastConnexion,
+  isChatMenuVisible,
   onRedirectToChat,
+  onToggleChatMenu,
 }: IProps) => {
   return (
     <div className="py-5 bg-light fixed right-0 w-3/5 pr-5 mobile:p-0 mobile:w-full">
@@ -64,8 +69,8 @@ const ChatHeader = ({
             <li className="mx-2 cursor-pointer">
               <VVideo />
             </li>
-            <li className="mx-2 cursor-pointer">
-              <VDotVerticalMenu />
+            <li className="mx-2 cursor-pointer" onClick={onToggleChatMenu}>
+              {isChatMenuVisible ? <VClose /> : <VDotVerticalMenu />}
             </li>
           </ul>
         </div>

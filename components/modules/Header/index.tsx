@@ -20,9 +20,11 @@ const Header = () => {
   };
   return (
     <div className="flex justify-center mobilemd:justify-between items-center">
-      <div className="cursor-pointer">
-        <VMenu className="text-3xl text-black mobilemd:hidden" />
-        <p className="hidden mobilemd:block font-bold">We connect</p>
+      <div className="cursor-pointer flex items-center">
+        <button>
+          <VMenu className="text-xl text-light" />
+        </button>
+        <p className="hidden mobilemd:block font-bold px-2">We connect</p>
       </div>
       <div className="hidden mobilemd:block">
         <VSearch />

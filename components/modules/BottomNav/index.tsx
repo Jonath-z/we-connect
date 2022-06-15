@@ -32,14 +32,6 @@ const BottomNav = () => {
           profile: false,
         });
         break;
-      case "profile":
-        setSelectedOption({
-          chat: false,
-          contact: false,
-          calls: false,
-          profile: true,
-        });
-        break;
     }
   };
 
@@ -80,17 +72,6 @@ const BottomNav = () => {
         >
           <VPhone />
           <span className="text-xs py-1 px-1">Calls</span>
-        </li>
-        <li
-          onClick={() => onSelectOption("profile")}
-          className={`flex justify-center items-center transition-all ${
-            selectedOption.profile
-              ? "bg-light text-dark px-3 py-1 rounded-xl"
-              : "flex-col"
-          }`}
-        >
-          <VContact />
-          <span className="text-xs py-1 px-1">Profile</span>
         </li>
       </ul>
     </div>

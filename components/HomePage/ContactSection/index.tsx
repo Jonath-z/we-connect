@@ -7,10 +7,12 @@ import Stories from "../../modules/Strories";
 import Chats from "../../modules/Chats";
 import Contacts from "../../modules/Contacts";
 import Calls from "components/modules/Calls";
+import Storyview from "components/modules/StoryView";
 
 const ContactSection = () => {
   const [isChatShowed, setIsChatShowed] = useRecoilState(showChatAtom);
   const [isSeeAll, setIsSeeAll] = useState(false);
+  const [isStoryView, setIsStoryView] = useState(false);
   const bottomNavSelectedOption = useRecoilValue(bottomNavAtom);
 
   const onShowChat = () => {
@@ -19,6 +21,10 @@ const ContactSection = () => {
 
   const toggleSeeAll = () => {
     setIsSeeAll(!isSeeAll);
+  };
+
+  const toggleStoryView = () => {
+    setIsStoryView(!isStoryView);
   };
 
   const contentTitle = () => {
@@ -53,7 +59,7 @@ const ContactSection = () => {
             isSeeAll ? "h-full overflow-y-auto" : "h-fit"
           } ${!bottomNavSelectedOption.chat && "hidden"} md:hidden`}
         >
-          <Stories isSeeAll={isSeeAll} />
+          <Stories isSeeAll={isSeeAll} toggleStoryView={toggleStoryView} />
         </div>
       </div>
       {bottomNavSelectedOption.chat && (
@@ -65,6 +71,23 @@ const ContactSection = () => {
       <div className={`${isSeeAll && "hidden"}`}>
         <BottomNav />
       </div>
+      {isStoryView && (
+        <Storyview
+          story={[
+            {
+              storyUrl:
+                "https://static1.makeuseofimages.com/wordpress/wp-content/uploads/2022/03/bored-ape-nft.jpg",
+              storyDescription: "This is we connect story",
+            },
+            {
+              storyUrl:
+                "https://static1.makeuseofimages.com/wordpress/wp-content/uploads/2022/03/bored-ape-nft.jpg",
+              storyDescription: "This is we connect story  second story",
+            },
+          ]}
+          toggleStoryView={toggleStoryView}
+        />
+      )}
     </div>
   );
 };

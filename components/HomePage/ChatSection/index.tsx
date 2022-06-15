@@ -1,16 +1,10 @@
 /* eslint-disable @next/next/no-img-element */
-import React from "react";
+import React, { useState } from "react";
 import { user } from "components/assets/dummy_data/user";
-import {
-  VDotVerticalMenu,
-  VPhone,
-  VSearch,
-  VVideo,
-} from "components/modules/_modules/vectors";
 import MessageCard from "components/modules/_modules/Cards/MessageCard";
-import { onlineMarker } from "components/static";
 import ChatHeader from "./ChatHeader";
 import InputMessage from "components/modules/InputMessage";
+import ChatMenu from "./ChatMenu";
 
 interface IProps {
   onRedirectToChat: () => void;
@@ -18,6 +12,12 @@ interface IProps {
 
 const ChatSection = ({ onRedirectToChat }: IProps) => {
   const { allMessages, userAvatarUrl, username, lastConnexion, online } = user;
+  const [isChatMenuVisible, setIsChatMenuVisible] = useState(false);
+
+  const onToggleChatMenu = () => {
+    setIsChatMenuVisible(!isChatMenuVisible);
+  };
+
   return (
     <div className="flex flex-col">
       <ChatHeader
@@ -26,6 +26,8 @@ const ChatSection = ({ onRedirectToChat }: IProps) => {
         lastConnexion={lastConnexion}
         online={online}
         onRedirectToChat={onRedirectToChat}
+        onToggleChatMenu={onToggleChatMenu}
+        isChatMenuVisible={isChatMenuVisible}
       />
       <div className="mx-auto flex flex-col w-full py-24 mobile:bg-light mobile:px-2">
         {allMessages.map((message, index) => {
@@ -37,6 +39,10 @@ const ChatSection = ({ onRedirectToChat }: IProps) => {
           );
         })}
       </div>
+      <ChatMenu
+        isChatMenuVisible={isChatMenuVisible}
+        setIsChatMenuVisible={setIsChatMenuVisible}
+      />
       <InputMessage />
     </div>
   );
