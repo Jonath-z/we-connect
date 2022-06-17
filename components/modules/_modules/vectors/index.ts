@@ -9,6 +9,7 @@ import {
   BsDot as VDot,
   BsCamera as VCamera,
   BsShopWindow as VShop,
+  BsWallet as VWallet,
 } from "react-icons/bs";
 import {
   MdOutlineMailOutline as VEmail,
@@ -59,4 +60,5 @@ export {
   VShop,
   VUser,
   VUserplus,
+  VWallet,
 };

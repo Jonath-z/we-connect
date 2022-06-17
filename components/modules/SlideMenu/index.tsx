@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
 import React from "react";
 import { user } from "components/assets/dummy_data/user";
-import { VUser, VUserplus } from "../_modules/vectors";
+import { VUser, VUserplus, VWallet } from "../_modules/vectors";
 import useClickOutside from "lib/hooks/useClickOutside";
 
 interface IProps {
@@ -36,12 +36,16 @@ const SlideMenu = ({ setIsSlideMenu, isSlideMenu }: IProps) => {
           <div className="mt-5 mx-3">
             <ul>
               <li className="flex items-center">
-                <VUser className="text-2xl" />{" "}
+                <VUser className="text-2xl" />
                 <span className="px-2">Profile</span>
               </li>
               <li className="flex items-center my-5">
-                <VUserplus className="text-2xl" />{" "}
+                <VUserplus className="text-2xl" />
                 <span className="px-2">Invite Friends</span>
+              </li>
+              <li className="flex items-center my-5">
+                <VWallet className="text-2xl" />
+                <span className="px-2">Connect wallet</span>
               </li>
             </ul>
           </div>
