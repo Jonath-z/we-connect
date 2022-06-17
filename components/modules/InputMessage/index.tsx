@@ -1,11 +1,37 @@
 import useInputAutoResize from "lib/hooks/useInputAutoResize";
-import React, { ChangeEventHandler, useState } from "react";
+import React, { ChangeEventHandler, useEffect, useState } from "react";
 import { VCamera, VLink, VSendPannel } from "../_modules/vectors";
+import Gun from "gun";
+import { useRecoilState } from "recoil";
+import { messagesAtom } from "lib/atoms";
+
+const gun = Gun({ peers: ["https://gun-manhattan.herokuapp.com/gun"] });
 
 const InputMessage = () => {
   const [messageValue, setMessageValue] = useState("");
+  const [messages, setMessages] = useRecoilState(messagesAtom);
 
   const { inputRef, setInputValue } = useInputAutoResize();
+
+  useEffect(() => {
+    const message = gun.get("messages");
+    message.map().on((m) => {
+      setMessages((prev) => [m, ...prev]);
+    });
+  }, []);
+
+  const saveMessage = () => {
+    const message = gun.get("messages");
+    message.set({
+      senderUsername: "zizou",
+      senderId: "Doe---id",
+      receiverUsername: "John Doe",
+      receiverId: "zizou_id",
+      message: messageValue,
+      date: Date.now().toLocaleString(),
+      time: Date.now().toLocaleString(),
+    });
+  };
 
   const onMessageChange: ChangeEventHandler<HTMLTextAreaElement> = ({
     target,
@@ -13,6 +39,10 @@ const InputMessage = () => {
     const { value } = target;
     setMessageValue(value);
     setInputValue(value);
+  };
+
+  const onSendMessage = () => {
+    saveMessage();
   };
 
   return (
@@ -29,7 +59,7 @@ const InputMessage = () => {
       />
       <div className="flex justify-center items-center">
         {messageValue ? (
-          <button className="text-2xl">
+          <button className="text-2xl" onClick={onSendMessage}>
             <VSendPannel />
           </button>
         ) : (

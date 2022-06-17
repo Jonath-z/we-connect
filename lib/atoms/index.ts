@@ -15,4 +15,19 @@ const bottomNavAtom = atom({
   },
 });
 
-export { showChatAtom, bottomNavAtom };
+const messagesAtom = atom({
+  key: "messageAtom",
+  default: [
+    {
+      senderUsername: "",
+      senderId: "",
+      receiverUsername: "",
+      receiverId: "",
+      message: "",
+      date: "",
+      time: "",
+    },
+  ],
+});
+
+export { showChatAtom, bottomNavAtom, messagesAtom };
