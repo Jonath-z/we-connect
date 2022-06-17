@@ -20,7 +20,10 @@ const SlideMenu = ({ setIsSlideMenu, isSlideMenu }: IProps) => {
           : "-translate-x-[2000px] duration-200"
       }`}
     >
-      <div className="w-[80%] bg-light text-dark h-full flex flex-col justify-between">
+      <div
+        ref={ref}
+        className="w-[80%] bg-light text-dark h-full flex flex-col justify-between"
+      >
         <div>
           <div className="flex items-center border-b border-gray-300 py-5 mx-3">
             <img
