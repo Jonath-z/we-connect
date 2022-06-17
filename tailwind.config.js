@@ -10,7 +10,7 @@ module.exports = {
       ...defaultColors,
       primary: "#14FFEC",
       dark: "#000",
-      light: "#E9E0E0",
+      light: "#F8F5EE",
     },
     extend: {
       fontFamily: {

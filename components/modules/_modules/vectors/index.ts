@@ -31,6 +31,7 @@ import {
   IoColorFillOutline as VColor,
 } from "react-icons/io5";
 import { AiOutlineMenu as VMenu } from "react-icons/ai";
+import { FiUser as VUser, FiUserPlus as VUserplus } from "react-icons/fi";
 
 export {
   WeConnectVector,
@@ -56,4 +57,6 @@ export {
   VColor,
   VTrash,
   VShop,
+  VUser,
+  VUserplus,
 };
