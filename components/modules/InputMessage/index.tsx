@@ -1,29 +1,28 @@
 import useInputAutoResize from "lib/hooks/useInputAutoResize";
 import React, { ChangeEventHandler, useEffect, useState } from "react";
 import { VCamera, VLink, VSendPannel } from "../_modules/vectors";
-import Gun from "gun";
 import { useRecoilState } from "recoil";
 import { messagesAtom } from "lib/atoms";
+import { gun } from "lib/gun";
 
-const gun = Gun({ peers: ["https://gun-manhattan.herokuapp.com/gun"] });
+const AllMessages = gun.get("messages");
 
 const InputMessage = () => {
   const [messageValue, setMessageValue] = useState("");
-  const [messages, setMessages] = useRecoilState(messagesAtom);
+  const [_, setMessages] = useRecoilState(messagesAtom);
 
   const { inputRef, setInputValue } = useInputAutoResize();
 
   useEffect(() => {
-    const message = gun.get("messages");
-    message.map().on((m) => {
-      setMessages((prev) => [m, ...prev]);
+    AllMessages.map().on((message) => {
+      console.log("last message", message);
+      setMessages((prevMessages) => [...prevMessages, message]);
     });
   }, []);
 
-  const saveMessage = () => {
-    const message = gun.get("messages");
-    message.set({
-      senderUsername: "zizou",
+  const onSendMessage = () => {
+    gun.get("messages").set({
+      senderUsername: "John Doe",
       senderId: "Doe---id",
       receiverUsername: "John Doe",
       receiverId: "zizou_id",
@@ -31,6 +30,7 @@ const InputMessage = () => {
       date: Date.now().toLocaleString(),
       time: Date.now().toLocaleString(),
     });
+    setMessageValue("");
   };
 
   const onMessageChange: ChangeEventHandler<HTMLTextAreaElement> = ({
@@ -39,10 +39,6 @@ const InputMessage = () => {
     const { value } = target;
     setMessageValue(value);
     setInputValue(value);
-  };
-
-  const onSendMessage = () => {
-    saveMessage();
   };
 
   return (
