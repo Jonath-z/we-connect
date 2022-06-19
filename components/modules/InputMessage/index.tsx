@@ -3,25 +3,26 @@ import React, { ChangeEventHandler, useEffect, useState } from "react";
 import { VCamera, VLink, VSendPannel } from "../_modules/vectors";
 import { useRecoilState } from "recoil";
 import { messagesAtom } from "lib/atoms";
-import { gun } from "lib/gun";
-
-const AllMessages = gun.get("messages");
+import { gunServices } from "lib/services/gunService";
 
 const InputMessage = () => {
   const [messageValue, setMessageValue] = useState("");
-  const [_, setMessages] = useRecoilState(messagesAtom);
+  const [messages, setMessages] = useRecoilState(messagesAtom);
 
   const { inputRef, setInputValue } = useInputAutoResize();
 
   useEffect(() => {
-    AllMessages.map().on((message) => {
-      console.log("last message", message);
-      setMessages((prevMessages) => [...prevMessages, message]);
+    gunServices.messageListener?.map().on((message) => {
+      setMessages((prevMessage) => [...prevMessage, message]);
     });
   }, []);
 
+  useEffect(() => {
+    console.log("this messages", messages);
+  }, [messages]);
+
   const onSendMessage = () => {
-    gun.get("messages").set({
+    const message = {
       senderUsername: "John Doe",
       senderId: "Doe---id",
       receiverUsername: "John Doe",
@@ -29,7 +30,9 @@ const InputMessage = () => {
       message: messageValue,
       date: Date.now().toLocaleString(),
       time: Date.now().toLocaleString(),
-    });
+    };
+
+    gunServices.sendMessage(message);
     setMessageValue("");
   };
 

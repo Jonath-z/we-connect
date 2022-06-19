@@ -17,17 +17,7 @@ const bottomNavAtom = atom({
 
 const messagesAtom = atom({
   key: "messageAtom",
-  default: [
-    {
-      senderUsername: "",
-      senderId: "",
-      receiverUsername: "",
-      receiverId: "",
-      message: "",
-      date: "",
-      time: "",
-    },
-  ],
+  default: <any[]>[],
 });
 
 export { showChatAtom, bottomNavAtom, messagesAtom };
