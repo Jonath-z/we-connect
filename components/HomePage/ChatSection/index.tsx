@@ -5,8 +5,7 @@ import MessageCard from "components/modules/_modules/Cards/MessageCard";
 import ChatHeader from "./ChatHeader";
 import InputMessage from "components/modules/InputMessage";
 import ChatMenu from "./ChatMenu";
-import { useRecoilValue } from "recoil";
-import { messagesAtom } from "lib/atoms";
+import useGunMessages from "lib/hooks/useGunMessages";
 
 interface IProps {
   onRedirectToChat: () => void;
@@ -15,17 +14,13 @@ interface IProps {
 const ChatSection = ({ onRedirectToChat }: IProps) => {
   const { userAvatarUrl, username, lastConnexion, online } = user;
   const [isChatMenuVisible, setIsChatMenuVisible] = useState(false);
-  const messages = useRecoilValue(messagesAtom);
   const chatSectionRef = useRef<HTMLDivElement>(null);
 
   const onToggleChatMenu = () => {
     setIsChatMenuVisible(!isChatMenuVisible);
   };
 
-  useEffect(() => {
-    if (chatSectionRef.current)
-      window.scrollTo(0, chatSectionRef.current?.scrollHeight);
-  }, []);
+  const messages = useGunMessages();
 
   return (
     <div className="flex flex-col">

@@ -12,12 +12,6 @@ const InputMessage = () => {
   const { inputRef, setInputValue } = useInputAutoResize();
 
   useEffect(() => {
-    gunServices.messageListener?.map().on((message) => {
-      setMessages((prevMessage) => [...prevMessage, message]);
-    });
-  }, []);
-
-  useEffect(() => {
     console.log("this messages", messages);
   }, [messages]);
 
