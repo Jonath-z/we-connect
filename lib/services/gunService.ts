@@ -8,7 +8,10 @@ class GunService {
     | undefined;
 
   constructor() {
-    this.gun = Gun("http://localhost:4000" + "/gun");
+    this.gun = Gun({
+      peers: ["http://localhost:4000/gun"],
+      localStorage: false,
+    });
     this.messageListener = this.gun.get("messages");
   }
 
