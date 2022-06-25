@@ -1,6 +1,5 @@
 import { gunServices } from "lib/services/gunService";
-import React, { useEffect, useRef, useState } from "react";
-import MessageCard from "components/modules/_modules/Cards/MessageCard";
+import React, { useEffect, useState } from "react";
 
 const useGunMessages = () => {
   const [messages, setMessages] = useState<any[]>([]);

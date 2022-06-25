@@ -104,46 +104,6 @@ export const user = {
       filter: null,
       allowReaction: true,
     },
-    {
-      id: new Date().getUTCMilliseconds(),
-      storyUrl:
-        "https://static1.makeuseofimages.com/wordpress/wp-content/uploads/2022/03/bored-ape-nft.jpg",
-      storyDescription: "this is my we connect's story, made with passion",
-      storyType: "standard",
-      expirationDate: "2022-07-1",
-      filter: null,
-      allowReaction: true,
-    },
-    {
-      id: new Date().getUTCMilliseconds(),
-      storyUrl:
-        "https://static1.makeuseofimages.com/wordpress/wp-content/uploads/2022/03/bored-ape-nft.jpg",
-      storyDescription: "this is my we connect's story, made with passion",
-      storyType: "standard",
-      expirationDate: "2022-07-1",
-      filter: null,
-      allowReaction: true,
-    },
-    {
-      id: new Date(),
-      storyUrl:
-        "https://static1.makeuseofimages.com/wordpress/wp-content/uploads/2022/03/bored-ape-nft.jpg",
-      storyDescription: "this is my we connect's story, made with passion",
-      storyType: "standard",
-      expirationDate: "2022-07-1",
-      filter: null,
-      allowReaction: true,
-    },
-    {
-      id: new Date(),
-      storyUrl:
-        "https://static1.makeuseofimages.com/wordpress/wp-content/uploads/2022/03/bored-ape-nft.jpg",
-      storyDescription: "this is my we connect's story, made with passion",
-      storyType: "standard",
-      expirationDate: "2022-07-1",
-      filter: null,
-      allowReaction: true,
-    },
   ],
   calls: [
     {
@@ -153,6 +113,7 @@ export const user = {
       Date: "2022-10-2",
       time: "10h5 am",
       missed: true,
+      isVideo: false,
     },
     {
       username: "John Doe",
@@ -161,6 +122,7 @@ export const user = {
       Date: "2022-10-2",
       time: "10h5 am",
       missed: false,
+      isVideo: false,
     },
   ],
   contacts: [

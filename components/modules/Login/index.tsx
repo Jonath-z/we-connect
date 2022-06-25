@@ -1,13 +1,10 @@
 import React from "react";
-import {
-  VArrowLeft,
-  VEmail,
-  Vfacebook,
-  WeConnectVector,
-} from "../_modules/vectors";
+import { VArrowLeft, WeConnectVector } from "../_modules/vectors";
 import loginBg from "../../assets/loginBg.jpg";
 import { useState } from "react";
 import { useEffect } from "react";
+import { GoogleLogin } from "react-google-login";
+import auth from "lib/services/auth";
 
 interface IProps {
   onClickBack: () => void;
@@ -52,14 +49,15 @@ const Login = ({ onClickBack }: IProps) => {
         <div className="bg-primary flex flex-col justify-center items-center mobilesm:items-stretch bg-opacity-30 backdrop-blur-md p-20 mobilemd:p-5 mobilesm:w-full mobile:my-10 mobilemd:bg-dark rounded-lg shadow-lg border border-light border-opacity-30 transition-all">
           <div>
             <h2 className="text-light text-5xl py-5">Join with</h2>
-            <button className="text-light bg-blue-600 w-96 mobilesm:w-full py-3 my-2 rounded-md flex justify-center items-center">
-              <Vfacebook className="mx-5" />
-              Facebook
-            </button>
-            <button className="text-light bg-red-600 w-96 mobilesm:w-full py-3 my-2 rounded-md flex justify-center items-center">
-              <VEmail className="mx-5" />
-              Email
-            </button>
+            <GoogleLogin
+              clientId="688414082981-656lplq2khvpkpucff94dv5080u79h9f.apps.googleusercontent.com"
+              buttonText="Google"
+              onSuccess={auth.onGoogleLoginSuccess}
+              onFailure={auth.onGoogleLoginFailure}
+              cookiePolicy={"single_host_origin"}
+              // isSignedIn={true}
+              className="text-light font-bold w-96 mobilesm:w-full py-3 my-2 rounded-md flex justify-center items-center"
+            />
           </div>
         </div>
       </div>

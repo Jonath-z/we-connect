@@ -1,11 +1,10 @@
 /* eslint-disable @next/next/no-img-element */
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState } from "react";
 import { user } from "components/assets/dummy_data/user";
 import MessageCard from "components/modules/_modules/Cards/MessageCard";
 import ChatHeader from "./ChatHeader";
 import InputMessage from "components/modules/InputMessage";
 import ChatMenu from "./ChatMenu";
-import { gunServices } from "lib/services/gunService";
 import useGunMessages from "lib/hooks/useGunMessages";
 
 interface IProps {
@@ -15,13 +14,11 @@ interface IProps {
 const ChatSection = ({ onRedirectToChat }: IProps) => {
   const { userAvatarUrl, username, lastConnexion, online } = user;
   const [isChatMenuVisible, setIsChatMenuVisible] = useState(false);
-  // const chatSectionRef = useRef<HTMLDivElement>(null);
 
   const onToggleChatMenu = () => {
     setIsChatMenuVisible(!isChatMenuVisible);
   };
 
-  // const chatSectionRef = useGunMessages();
   const messages = useGunMessages();
 
   return (
@@ -35,10 +32,7 @@ const ChatSection = ({ onRedirectToChat }: IProps) => {
         onToggleChatMenu={onToggleChatMenu}
         isChatMenuVisible={isChatMenuVisible}
       />
-      <div
-        // ref={chatSectionRef}
-        className="mx-auto flex flex-col w-full py-24 mobile:bg-light min-h-screen mobile:px-2"
-      >
+      <div className="mx-auto flex flex-col w-full py-24 mobile:bg-light min-h-screen mobile:px-2">
         {messages.map((message, index) => {
           return (
             <div key={index}>
