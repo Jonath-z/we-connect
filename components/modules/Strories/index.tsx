@@ -15,11 +15,7 @@ const Stories = ({ isSeeAll, toggleStoryView }: IProps) => {
 
   return (
     <div className="bg-dark">
-      <div
-        className={`w-full overflow-x-auto flex flex-col flex-wrap ${
-          !isSeeAll && "h-28"
-        }`}
-      >
+      <div className={`w-full overflow-x-auto flex ${!isSeeAll && "h-28"}`}>
         {stories.map((story, index) => {
           return (
             <div
@@ -27,7 +23,7 @@ const Stories = ({ isSeeAll, toggleStoryView }: IProps) => {
               role="button"
               onKeyDown={() => null}
               key={index}
-              className={`mx-2 relative flex ${
+              className={`mx-2 relative flex w-fit ${
                 isSeeAll
                   ? "my-1 flex-row items-center"
                   : "items-center flex-col"
