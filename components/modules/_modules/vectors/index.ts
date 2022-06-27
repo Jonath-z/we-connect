@@ -14,6 +14,7 @@ import {
 import {
   MdOutlineMailOutline as VEmail,
   MdClose as VClose,
+  MdSend as VSend,
 } from "react-icons/md";
 
 import { AiOutlineSearch as VSearch } from "react-icons/ai";
@@ -33,6 +34,7 @@ import {
 } from "react-icons/io5";
 import { AiOutlineMenu as VMenu } from "react-icons/ai";
 import { FiUser as VUser, FiUserPlus as VUserplus } from "react-icons/fi";
+import { ImAttachment as VAttachement } from "react-icons/im";
 
 export {
   WeConnectVector,
@@ -61,4 +63,6 @@ export {
   VUser,
   VUserplus,
   VWallet,
+  VAttachement,
+  VSend,
 };

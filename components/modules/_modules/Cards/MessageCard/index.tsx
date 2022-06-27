@@ -1,3 +1,4 @@
+/* eslint-disable @next/next/no-img-element */
 import { user } from "components/assets/dummy_data/user";
 import base64ToObjectUrl from "lib/helper/base64ToObjectUrl";
 import React from "react";
@@ -11,6 +12,7 @@ type Message = {
   date: string;
   time: string;
   isVideo: boolean;
+  isImage: boolean;
 };
 
 interface IProps {
@@ -18,7 +20,7 @@ interface IProps {
 }
 
 const MessageCard = ({ messages }: IProps) => {
-  const { message, time, senderId, isVideo } = messages;
+  const { message, time, senderId, isVideo, isImage } = messages;
   console.log("message received", messages);
   const { id } = user;
   return (
@@ -29,11 +31,12 @@ const MessageCard = ({ messages }: IProps) => {
           : "bg-dark text-light ml-auto  rounded-t-xl rounded-bl-xl"
       }`}
     >
-      {!isVideo ? (
+      {!isVideo && !isImage && (
         <p className={`text-xs ${id === senderId ? "mr-auto" : "ml-auto"}`}>
           {message}
         </p>
-      ) : (
+      )}
+      {isVideo && (
         <video
           className="h-80 w-80 rounded-lg"
           autoPlay={false}
@@ -45,6 +48,13 @@ const MessageCard = ({ messages }: IProps) => {
             className="rounded-lg"
           />
         </video>
+      )}
+      {isImage && (
+        <img
+          src={base64ToObjectUrl(message)}
+          alt="file-message"
+          className="w-80 h-80 object-cover rounded-lg"
+        />
       )}
       <p className="text-[10px] py-[2px] ml-auto">{time}</p>
     </div>
