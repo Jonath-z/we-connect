@@ -1,12 +1,6 @@
 import useInputAutoResize from "lib/hooks/useInputAutoResize";
 import React, { ChangeEventHandler, useEffect, useRef, useState } from "react";
-import {
-  VAttachement,
-  VCamera,
-  VLink,
-  VSend,
-  VSendPannel,
-} from "../_modules/vectors";
+import { VAttachement, VCamera, VSend } from "../_modules/vectors";
 import { useRecoilState } from "recoil";
 import { messagesAtom } from "lib/atoms";
 import { gunServices } from "lib/services/gunService";
