@@ -37,11 +37,7 @@ const MessageCard = ({ messages }: IProps) => {
         </p>
       )}
       {isVideo && (
-        <video
-          className="h-80 w-80 rounded-lg"
-          autoPlay={false}
-          controls={true}
-        >
+        <video autoPlay={false} controls={true}>
           <source
             src={base64ToObjectUrl(message)}
             type="video/webm"

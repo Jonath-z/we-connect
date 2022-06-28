@@ -44,15 +44,6 @@ const InputMessage = () => {
     inputFileRef.current?.click();
   };
 
-  // const onFileChange = (event: { target: any }) => {
-  //   const { files } = event.target;
-  //   // setIsImage((files[0].type as string).includes("image"));
-  //   // setInputFile(files[0]);
-  //   const filePreviewUrl = URL.createObjectURL(files[0]);
-  //   console.log("file local url", filePreviewUrl);
-  //   // setNftDetails({ ...nftDetails, previewUrl: filePreviewUrl });
-  // };
-
   const onFileChange = (e: { target: { files: any } }) => {
     const { files } = e.target;
     if (files && files[0].type.match("image.*")) {
