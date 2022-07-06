@@ -14,7 +14,7 @@ const SlideMenu = ({ setIsSlideMenu, isSlideMenu }: IProps) => {
   const ref = useClickOutside(() => setIsSlideMenu(false));
   return (
     <div
-      className={`fixed top-0 left-0 right-0 bottom-0 h-full w-full bg-dark bg-opacity-50 backdrop-blur ${
+      className={`fixed top-0 left-0 right-0 bottom-0 h-full w-full ${
         isSlideMenu
           ? "translate-x-0 duration-200"
           : "-translate-x-[2000px] duration-200"
@@ -22,7 +22,7 @@ const SlideMenu = ({ setIsSlideMenu, isSlideMenu }: IProps) => {
     >
       <div
         ref={ref}
-        className="w-[80%] bg-light text-dark h-full flex flex-col justify-between"
+        className="w-[80%] bg-light shadow-xl rounded-r-lg border text-dark h-full flex flex-col justify-between"
       >
         <div>
           <div className="flex items-center border-b border-gray-300 py-5 mx-3">

@@ -10,6 +10,9 @@ import {
   BsCamera as VCamera,
   BsShopWindow as VShop,
   BsWallet as VWallet,
+  BsFillCameraVideoOffFill as VVideoOff,
+  BsMicFill as VMicrophone,
+  BsFillMicMuteFill as VMicrophoneOff,
 } from "react-icons/bs";
 import {
   MdOutlineMailOutline as VEmail,
@@ -26,6 +29,7 @@ import {
 import {
   RiContactsBook2Fill as VContactBook,
   RiSendPlaneFill as VSendPannel,
+  RiDragMoveLine as VDragAndDrop,
 } from "react-icons/ri";
 import { IoMdContact as VContact } from "react-icons/io";
 import {
@@ -35,6 +39,7 @@ import {
 import { AiOutlineMenu as VMenu } from "react-icons/ai";
 import { FiUser as VUser, FiUserPlus as VUserplus } from "react-icons/fi";
 import { ImAttachment as VAttachement } from "react-icons/im";
+import { TbArrowsMinimize as VArrowMinify } from "react-icons/tb";
 
 export {
   WeConnectVector,
@@ -65,4 +70,9 @@ export {
   VWallet,
   VAttachement,
   VSend,
+  VMicrophone,
+  VMicrophoneOff,
+  VVideoOff,
+  VArrowMinify,
+  VDragAndDrop,
 };
