@@ -20,4 +20,9 @@ const messagesAtom = atom({
   default: <any[]>[],
 });
 
+export const callRoomAtom = atom({
+  key: "roomCall",
+  default: false,
+});
+
 export { showChatAtom, bottomNavAtom, messagesAtom };

@@ -1,3 +1,4 @@
+import { callRoomAtom } from "lib/atoms";
 import React, {
   useCallback,
   useMemo,
@@ -9,27 +10,22 @@ import React, {
   useEffect,
   useState,
 } from "react";
+import { useRecoilValue } from "recoil";
 
 interface IMouve {
-  //   startPointRef: HTMLDivElement | null;
   movingPatternRef: LegacyRef<HTMLDivElement> | null;
   isMoving: boolean;
-  //   onTouchStart: (e: React.TouchEvent) => void;
+  onTouchStart: () => void;
   onTouchmouve: (e: React.TouchEvent) => void;
   onTouchend: (e: React.TouchEvent) => void;
-  //   onMouseDown: (e: React.MouseEvent) => void;
-  onMouseMouve: (e: React.MouseEvent) => void;
 }
 
 const defaultContext: IMouve = {
-  //   startPointRef: null,
   movingPatternRef: null,
-  //   onTouchStart: () => null,
+  onTouchStart: () => null,
   onTouchmouve: () => null,
   onTouchend: () => null,
   isMoving: false,
-  //   onMouseDown: () => null,
-  onMouseMouve: () => null,
 };
 
 const MouveOnScreenContext = createContext<IMouve>(defaultContext);
@@ -38,8 +34,7 @@ export const useMouveOnScreen = () => useContext(MouveOnScreenContext);
 const MouveOnScreenProvider: FC = ({ children }: any) => {
   const movingPatternRef = useRef<HTMLDivElement>(null);
   const [isMoving, setIsMoving] = useState(false);
-  // const [windowHeight, setWindowHeight] = useState(0);
-  // const [windowWidth, setWindowWidth] = useState(0);
+  const isCallRoomMiniFied = useRecoilValue(callRoomAtom);
 
   const windowHeight = () => {
     if (typeof window !== undefined) {
@@ -52,19 +47,21 @@ const MouveOnScreenProvider: FC = ({ children }: any) => {
     }
   };
 
-  // useEffect(() => {
-  //   window.onload = () => {
-  //     console.log("window height", window.innerHeight);
-  //     setWindowHeight(window.innerHeight);
-  //     setWindowWidth(window.innerWidth);
-  //   };
-  // }, [isMoving]);
-
   useEffect(() => {
     if (movingPatternRef.current) {
       movingPatternRef.current.style.top = "0px";
     }
   }, []);
+
+  useEffect(() => {
+    console.log("minified status", isCallRoomMiniFied);
+    if (!isCallRoomMiniFied && movingPatternRef.current) {
+      movingPatternRef.current.style.top = "0px";
+      movingPatternRef.current.style.bottom = "0px";
+      movingPatternRef.current.style.left = "0px";
+      movingPatternRef.current.style.right = "0px";
+    }
+  }, [isCallRoomMiniFied]);
 
   const patternDestination = useMemo(
     () => ({
@@ -75,51 +72,57 @@ const MouveOnScreenProvider: FC = ({ children }: any) => {
   );
 
   const mouvePattern = (e: { touches: { clientY: any; clientX: any }[] }) => {
-    console.log(windowHeight(), e.touches[0].clientY);
-    if (
-      windowHeight() &&
-      windowWidth() &&
-      movingPatternRef.current &&
-      e.touches[0].clientY <= windowHeight()! &&
-      e.touches[0].clientY > 0 &&
-      e.touches[0].clientX > 0 &&
-      e.touches[0].clientX < windowWidth()!
-    ) {
-      movingPatternRef.current.style.top = `${e.touches[0].clientY}px`;
-      movingPatternRef.current.style.left = `${e.touches[0].clientX}px`;
-      // movingPatternRef.current.style.transform = `translateX(${e.touches[0].clientX}px)`;
-      patternDestination.x = e.touches[0].clientX;
-      patternDestination.y = e.touches[0].clientY;
+    if (movingPatternRef.current) {
+      if (
+        windowHeight() &&
+        windowWidth() &&
+        e.touches[0].clientY > 0 &&
+        e.touches[0].clientX > 0
+      ) {
+        movingPatternRef.current.style.top = `${e.touches[0].clientY}px`;
+        movingPatternRef.current.style.left = `${e.touches[0].clientX}px`;
+        patternDestination.x = e.touches[0].clientX;
+        patternDestination.y = e.touches[0].clientY;
+      }
     }
   };
 
-  const onTouchmouve = useCallback((e: any) => {
+  const onTouchStart = () => {
     setIsMoving(true);
+  };
+
+  const onTouchmouve = useCallback((e: any) => {
     mouvePattern(e);
   }, []);
 
   const onTouchend = useCallback((e: any) => {
     setIsMoving(false);
     if (movingPatternRef.current) {
-      movingPatternRef.current.style.transform = `translateY(${patternDestination.y}px)`;
-      movingPatternRef.current.style.transform = `translateX(${patternDestination.x}px)`;
+      if (patternDestination.x >= windowWidth()!) {
+        console.log("reach max width");
+        movingPatternRef.current.style.right = "30px";
+        movingPatternRef.current.style.left = "unset";
+        patternDestination.x = 0;
+      }
+
+      if (patternDestination.y >= windowHeight()!) {
+        movingPatternRef.current.style.bottom = "0px";
+        movingPatternRef.current.style.top = "unset";
+        patternDestination.y = 0;
+      }
+      movingPatternRef.current.style.top = `${patternDestination.y}px`;
+      movingPatternRef.current.style.left = `${patternDestination.x}px`;
     }
   }, []);
-
-  const onMouseMouve = (e: any) => {
-    setIsMoving(true);
-    console.log("mouse move", e);
-    // mouvePattern(e);
-  };
 
   return (
     <MouveOnScreenContext.Provider
       value={{
         onTouchmouve,
-        onMouseMouve,
         movingPatternRef,
         onTouchend,
         isMoving,
+        onTouchStart,
       }}
     >
       {children}
