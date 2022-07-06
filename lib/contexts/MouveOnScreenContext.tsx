@@ -31,7 +31,7 @@ const defaultContext: IMouve = {
 const MouveOnScreenContext = createContext<IMouve>(defaultContext);
 export const useMouveOnScreen = () => useContext(MouveOnScreenContext);
 
-const MouveOnScreenProvider: FC = ({ children }: any) => {
+const MouveOnScreenProvider = ({ children }: any) => {
   const movingPatternRef = useRef<HTMLDivElement>(null);
   const [isMoving, setIsMoving] = useState(false);
   const isCallRoomMiniFied = useRecoilValue(callRoomAtom);
