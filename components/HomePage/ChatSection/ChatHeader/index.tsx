@@ -8,7 +8,9 @@ import {
   VVideo,
 } from "components/modules/_modules/vectors";
 import { onlineMarker } from "components/static";
+import { openCallRoomAtom } from "lib/atoms";
 import React from "react";
+import { useSetRecoilState } from "recoil";
 
 interface IProps {
   userAvatarUrl: string;
@@ -29,6 +31,7 @@ const ChatHeader = ({
   onRedirectToChat,
   onToggleChatMenu,
 }: IProps) => {
+  const openCallRoom = useSetRecoilState(openCallRoomAtom);
   return (
     <div className="py-5 bg-light fixed right-0 w-3/5 pr-5 mobile:p-0 mobile:w-full">
       <div className="flex justify-between items-center bg-white px-5 mobile:px-1 py-1 rounded-md mobile:rounded-none">
@@ -66,7 +69,12 @@ const ChatHeader = ({
             <li className="mx-2 cursor-pointer">
               <VPhone />
             </li>
-            <li className="mx-2 cursor-pointer">
+            <li
+              onClick={() => openCallRoom(true)}
+              role="button"
+              onKeyDown={() => null}
+              className="mx-2 cursor-pointer"
+            >
               <VVideo />
             </li>
             <li className="mx-2 cursor-pointer" onClick={onToggleChatMenu}>

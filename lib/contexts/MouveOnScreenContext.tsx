@@ -1,4 +1,4 @@
-import { callRoomAtom } from "lib/atoms";
+import { minifyCallRoomAtom, openCallRoomAtom } from "lib/atoms";
 import React, {
   useCallback,
   useMemo,
@@ -9,12 +9,11 @@ import React, {
   useEffect,
   useState,
 } from "react";
-import { useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 
 interface IMouve {
   movingPatternRef: LegacyRef<HTMLDivElement> | null;
   isMoving: boolean;
-  isCanceledCall: boolean;
   patternOutsideview: boolean;
   onTouchStart: (e: React.TouchEvent) => void;
   onTouchmouve: (e: React.TouchEvent) => void;
@@ -27,7 +26,6 @@ const defaultContext: IMouve = {
   onTouchmouve: () => null,
   onTouchend: () => null,
   isMoving: false,
-  isCanceledCall: false,
   patternOutsideview: false,
 };
 
@@ -37,15 +35,17 @@ export const useMouveOnScreen = () => useContext(MouveOnScreenContext);
 const MouveOnScreenProvider = ({ children }: any) => {
   const movingPatternRef = useRef<HTMLDivElement>(null);
   const [isMoving, setIsMoving] = useState(false);
-  const [isCanceledCall, setIsCanceledCall] = useState(false);
   const [patternOutsideview, setPatternOutsideView] = useState(false);
-  const isCallRoomMiniFied = useRecoilValue(callRoomAtom);
+  const openCallRoom = useSetRecoilState(openCallRoomAtom);
+  const [isCallRoomMiniFied, setCallRoomMinified] =
+    useRecoilState(minifyCallRoomAtom);
 
   const windowHeight = () => {
     if (typeof window !== undefined) {
       return window.innerHeight;
     }
   };
+
   const windowWidth = () => {
     if (typeof window !== undefined) {
       return window.innerWidth;
@@ -117,13 +117,18 @@ const MouveOnScreenProvider = ({ children }: any) => {
       setIsMoving(false);
       if (movingPatternRef.current) {
         if (patternOutsideview) {
-          setIsCanceledCall(true);
+          openCallRoom(false);
+          setCallRoomMinified(false);
+          movingPatternRef.current.style.right = "2px";
+          movingPatternRef.current.style.top = "30px";
+          patternDestination.x = 0;
+          patternDestination.y = 0;
         }
         movingPatternRef.current.style.top = `${patternDestination.y}px`;
         movingPatternRef.current.style.left = `${patternDestination.x}px`;
       }
     },
-    [patternDestination.x, patternDestination.y, patternOutsideview]
+    [openCallRoom, patternDestination, patternOutsideview, setCallRoomMinified]
   );
 
   return (
@@ -134,7 +139,6 @@ const MouveOnScreenProvider = ({ children }: any) => {
         onTouchend,
         isMoving,
         onTouchStart,
-        isCanceledCall,
         patternOutsideview,
       }}
     >

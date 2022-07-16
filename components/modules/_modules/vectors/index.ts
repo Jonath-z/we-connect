@@ -18,6 +18,7 @@ import {
   MdOutlineMailOutline as VEmail,
   MdClose as VClose,
   MdSend as VSend,
+  MdOutlineZoomOutMap as VZoomOut,
 } from "react-icons/md";
 
 import { AiOutlineSearch as VSearch } from "react-icons/ai";
@@ -75,4 +76,5 @@ export {
   VVideoOff,
   VArrowMinify,
   VDragAndDrop,
+  VZoomOut,
 };

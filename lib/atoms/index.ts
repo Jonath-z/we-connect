@@ -1,11 +1,11 @@
 import { atom } from "recoil";
 
-const showChatAtom = atom({
+export const showChatAtom = atom({
   key: "showChatAtom",
   default: false,
 });
 
-const bottomNavAtom = atom({
+export const bottomNavAtom = atom({
   key: "bottomNavAtom",
   default: {
     chat: true,
@@ -15,14 +15,17 @@ const bottomNavAtom = atom({
   },
 });
 
-const messagesAtom = atom({
+export const messagesAtom = atom({
   key: "messageAtom",
   default: <any[]>[],
 });
 
-export const callRoomAtom = atom({
+export const minifyCallRoomAtom = atom({
   key: "roomCall",
   default: false,
 });
 
-export { showChatAtom, bottomNavAtom, messagesAtom };
+export const openCallRoomAtom = atom({
+  key: "openCallRoomAtom",
+  default: false,
+});

@@ -1,6 +1,5 @@
 import CallRoom from "components/modules/CallRoom";
-import { showChatAtom } from "lib/atoms";
-import { useMouveOnScreen } from "lib/contexts/MouveOnScreenContext";
+import { openCallRoomAtom, showChatAtom } from "lib/atoms";
 import React, { useEffect } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 import ChatSection from "./ChatSection";
@@ -8,11 +7,11 @@ import ContactSection from "./ContactSection";
 
 const HomePage = () => {
   const [isChatShowed, setIsChatShowed] = useRecoilState(showChatAtom);
-  const { isCanceledCall } = useMouveOnScreen();
+  const isOpenedCallRoom = useRecoilValue(openCallRoomAtom);
 
   useEffect(() => {
-    console.log("call canceled", isCanceledCall);
-  }, [isCanceledCall]);
+    console.log("is opened call room", isOpenedCallRoom);
+  }, [isOpenedCallRoom]);
 
   return (
     <>
@@ -40,7 +39,7 @@ const HomePage = () => {
           )}
         </div>
       </div>
-      {!isCanceledCall && <CallRoom roomType="video" />}
+      {isOpenedCallRoom && <CallRoom roomType="video" />}
     </>
   );
 };
