@@ -1,15 +1,21 @@
 import CallRoom from "components/modules/CallRoom";
 import { showChatAtom } from "lib/atoms";
-import MouveOnScreenProvider from "lib/contexts/MouveOnScreenContext";
-import React from "react";
+import { useMouveOnScreen } from "lib/contexts/MouveOnScreenContext";
+import React, { useEffect } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 import ChatSection from "./ChatSection";
 import ContactSection from "./ContactSection";
 
 const HomePage = () => {
   const [isChatShowed, setIsChatShowed] = useRecoilState(showChatAtom);
+  const { isCanceledCall } = useMouveOnScreen();
+
+  useEffect(() => {
+    console.log("call canceled", isCanceledCall);
+  }, [isCanceledCall]);
+
   return (
-    <MouveOnScreenProvider>
+    <>
       <div className={`h-screen flex bg-dark md:bg-light overflow-x-hidden`}>
         <div
           className={`w-2/5 h-full overflow-y-auto mobilemd:w-full ${
@@ -34,8 +40,8 @@ const HomePage = () => {
           )}
         </div>
       </div>
-      <CallRoom roomType="video" />
-    </MouveOnScreenProvider>
+      {!isCanceledCall && <CallRoom roomType="video" />}
+    </>
   );
 };
 

@@ -24,14 +24,29 @@ const CallRoom = ({ roomType }: IProps) => {
   const [videoMuted, setVideoMuted] = useState(false);
   const [isMinified, setIsMinified] = useRecoilState(callRoomAtom);
 
-  const { onTouchmouve, onTouchStart, onTouchend, movingPatternRef, isMoving } =
-    useMouveOnScreen();
+  const {
+    onTouchmouve,
+    onTouchStart,
+    onTouchend,
+    movingPatternRef,
+    isMoving,
+    isCanceledCall,
+    patternOutsideview,
+  } = useMouveOnScreen();
+
+  useEffect(() => {
+    console.log("pattern outide of view", patternOutsideview);
+  }, [patternOutsideview]);
 
   return (
     <div
       className={
         isMoving
-          ? "h-full w-full bg-black bg-opacity-40 z-30 fixed top-0 left-0 bottom-0 right-0"
+          ? `h-full w-full bg-opacity-40 z-30 fixed top-0 left-0 bottom-0 right-0 ${
+              patternOutsideview
+                ? "bg-red-400 border border-red-600"
+                : "bg-black"
+            }`
           : ""
       }
     >

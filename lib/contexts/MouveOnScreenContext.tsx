@@ -6,7 +6,6 @@ import React, {
   createContext,
   useRef,
   LegacyRef,
-  FC,
   useEffect,
   useState,
 } from "react";
@@ -15,7 +14,9 @@ import { useRecoilValue } from "recoil";
 interface IMouve {
   movingPatternRef: LegacyRef<HTMLDivElement> | null;
   isMoving: boolean;
-  onTouchStart: () => void;
+  isCanceledCall: boolean;
+  patternOutsideview: boolean;
+  onTouchStart: (e: React.TouchEvent) => void;
   onTouchmouve: (e: React.TouchEvent) => void;
   onTouchend: (e: React.TouchEvent) => void;
 }
@@ -26,6 +27,8 @@ const defaultContext: IMouve = {
   onTouchmouve: () => null,
   onTouchend: () => null,
   isMoving: false,
+  isCanceledCall: false,
+  patternOutsideview: false,
 };
 
 const MouveOnScreenContext = createContext<IMouve>(defaultContext);
@@ -34,6 +37,8 @@ export const useMouveOnScreen = () => useContext(MouveOnScreenContext);
 const MouveOnScreenProvider = ({ children }: any) => {
   const movingPatternRef = useRef<HTMLDivElement>(null);
   const [isMoving, setIsMoving] = useState(false);
+  const [isCanceledCall, setIsCanceledCall] = useState(false);
+  const [patternOutsideview, setPatternOutsideView] = useState(false);
   const isCallRoomMiniFied = useRecoilValue(callRoomAtom);
 
   const windowHeight = () => {
@@ -73,47 +78,53 @@ const MouveOnScreenProvider = ({ children }: any) => {
 
   const mouvePattern = (e: { touches: { clientY: any; clientX: any }[] }) => {
     if (movingPatternRef.current) {
-      if (
-        windowHeight() &&
-        windowWidth() &&
-        e.touches[0].clientY > 0 &&
-        e.touches[0].clientX > 0
-      ) {
+      if (e.touches[0].clientY > 0 && e.touches[0].clientX > 0) {
+        setPatternOutsideView(false);
         movingPatternRef.current.style.top = `${e.touches[0].clientY}px`;
         movingPatternRef.current.style.left = `${e.touches[0].clientX}px`;
         patternDestination.x = e.touches[0].clientX;
         patternDestination.y = e.touches[0].clientY;
       }
+      if (windowHeight()! && windowWidth()!) {
+        if (
+          e.touches[0].clientY >=
+            windowHeight()! - movingPatternRef.current.offsetHeight ||
+          e.touches[0].clientX >=
+            windowWidth()! - movingPatternRef.current.offsetWidth
+        ) {
+          setPatternOutsideView(true);
+        }
+      }
     }
   };
 
-  const onTouchStart = () => {
+  const onTouchStart = (e: any) => {
     setIsMoving(true);
+    if (movingPatternRef.current) {
+      movingPatternRef.current.style.top = `${e.touches[0].clientY}px`;
+      movingPatternRef.current.style.left = `${e.touches[0].clientX}px`;
+      patternDestination.x = e.touches[0].clientX;
+      patternDestination.y = e.touches[0].clientY;
+    }
   };
 
   const onTouchmouve = useCallback((e: any) => {
     mouvePattern(e);
   }, []);
 
-  const onTouchend = useCallback((e: any) => {
-    setIsMoving(false);
-    if (movingPatternRef.current) {
-      if (patternDestination.x >= windowWidth()!) {
-        console.log("reach max width");
-        movingPatternRef.current.style.right = "30px";
-        movingPatternRef.current.style.left = "unset";
-        patternDestination.x = 0;
+  const onTouchend = useCallback(
+    (e: any) => {
+      setIsMoving(false);
+      if (movingPatternRef.current) {
+        if (patternOutsideview) {
+          setIsCanceledCall(true);
+        }
+        movingPatternRef.current.style.top = `${patternDestination.y}px`;
+        movingPatternRef.current.style.left = `${patternDestination.x}px`;
       }
-
-      if (patternDestination.y >= windowHeight()!) {
-        movingPatternRef.current.style.bottom = "0px";
-        movingPatternRef.current.style.top = "unset";
-        patternDestination.y = 0;
-      }
-      movingPatternRef.current.style.top = `${patternDestination.y}px`;
-      movingPatternRef.current.style.left = `${patternDestination.x}px`;
-    }
-  }, []);
+    },
+    [patternDestination.x, patternDestination.y, patternOutsideview]
+  );
 
   return (
     <MouveOnScreenContext.Provider
@@ -123,6 +134,8 @@ const MouveOnScreenProvider = ({ children }: any) => {
         onTouchend,
         isMoving,
         onTouchStart,
+        isCanceledCall,
+        patternOutsideview,
       }}
     >
       {children}
