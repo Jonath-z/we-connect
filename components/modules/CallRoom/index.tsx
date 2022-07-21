@@ -21,8 +21,8 @@ interface IProps {
 }
 
 const CallRoom = ({ roomType }: IProps) => {
-  const [micMuted, setMicMuted] = useState(false);
   const [videoMuted, setVideoMuted] = useState(false);
+  const [audioMuted, setAudioMuted] = useState(false);
   const [isMinified, setIsMinified] = useRecoilState(minifyCallRoomAtom);
   const { videoRef, cameraStream, mediaRecorder, blobRecorded, setStreamType } =
     useMediaStream();
@@ -36,13 +36,9 @@ const CallRoom = ({ roomType }: IProps) => {
     patternOutsideview,
   } = useMouveOnScreen();
 
-  useEffect(() => {
-    console.log("pattern outide of view", patternOutsideview);
-  }, [patternOutsideview]);
-
   const onRemoveVideo = () => {
     setStreamType({ video: false, audio: true });
-    setVideoMuted(!videoMuted);
+    setAudioMuted(!audioMuted);
   };
 
   const onRemoveAudio = () => {
@@ -80,7 +76,7 @@ const CallRoom = ({ roomType }: IProps) => {
             <VArrowLeft />
           </div>
         )}
-        {/* {!isMinified && ( */}
+
         <div
           className={` ${
             !isMinified ? "absolute top-0 bottom-0 left-0 right-0" : "hidden"
@@ -93,7 +89,7 @@ const CallRoom = ({ roomType }: IProps) => {
             controls={false}
           ></video>
         </div>
-        {/* )} */}
+
         <div className="z-20">
           <ul
             className={`${
@@ -113,7 +109,7 @@ const CallRoom = ({ roomType }: IProps) => {
                     : "bg-red-600 text-light p-5 rounded-full transition-all"
                 }
               >
-                {micMuted ? <VMicrophoneOff /> : <VMicrophone />}
+                {audioMuted ? <VMicrophoneOff /> : <VMicrophone />}
               </li>
             )}
             <li
@@ -148,7 +144,14 @@ const CallRoom = ({ roomType }: IProps) => {
 
             {isMinified && (
               <div
-                onTouchEnd={onTouchend}
+                onTouchEnd={(e) => {
+                  onTouchend(e);
+                  if (patternOutsideview && cameraStream.current) {
+                    cameraStream.current
+                      .getTracks()
+                      .forEach((track: { stop: () => any }) => track.stop());
+                  }
+                }}
                 onTouchMove={onTouchmouve}
                 onTouchStart={onTouchStart}
               >
