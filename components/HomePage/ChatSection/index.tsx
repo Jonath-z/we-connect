@@ -1,5 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
-import React, { useState } from "react";
+import React, { Dispatch, SetStateAction, useState } from "react";
 import { user } from "components/assets/dummy_data/user";
 import MessageCard from "components/modules/_modules/Cards/MessageCard";
 import ChatHeader from "./ChatHeader";

@@ -29,7 +29,7 @@ const ContactSection = () => {
 
   const contentTitle = () => {
     if (bottomNavSelectedOption.chat) {
-      return "Stories";
+      return "Story";
     } else if (bottomNavSelectedOption.contact) {
       return "Contacts";
     } else if (bottomNavSelectedOption.calls) {

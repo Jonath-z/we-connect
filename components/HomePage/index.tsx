@@ -1,17 +1,19 @@
 import CallRoom from "components/modules/CallRoom";
 import { openCallRoomAtom, showChatAtom } from "lib/atoms";
-import React, { useEffect } from "react";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useCallContext } from "lib/contexts/CallContext";
+import callServices from "lib/services/callServices";
+import React, { useEffect, useState } from "react";
+import { useRecoilState } from "recoil";
 import ChatSection from "./ChatSection";
 import ContactSection from "./ContactSection";
 
 const HomePage = () => {
   const [isChatShowed, setIsChatShowed] = useRecoilState(showChatAtom);
-  const isOpenedCallRoom = useRecoilValue(openCallRoomAtom);
 
-  useEffect(() => {
-    console.log("is opened call room", isOpenedCallRoom);
-  }, [isOpenedCallRoom]);
+  const { inComingCallInfo } = useCallContext();
+
+  const [isOpenedCallRoom, setIsOpenedClassRoom] =
+    useRecoilState(openCallRoomAtom);
 
   return (
     <>
@@ -39,7 +41,13 @@ const HomePage = () => {
           )}
         </div>
       </div>
-      {isOpenedCallRoom && <CallRoom roomType="video" />}
+      {isOpenedCallRoom && (
+        <CallRoom
+          roomType="video"
+          from={inComingCallInfo.from}
+          to={inComingCallInfo.to}
+        />
+      )}
     </>
   );
 };

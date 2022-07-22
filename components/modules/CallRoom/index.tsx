@@ -1,7 +1,9 @@
+/* eslint-disable @next/next/no-img-element */
 // import useMouveOnScreen from "lib/hooks/useMouveOnScreen";
 import { minifyCallRoomAtom } from "lib/atoms";
+import { useCallContext } from "lib/contexts/CallContext";
 import { useMouveOnScreen } from "lib/contexts/MouveOnScreenContext";
-import useMediaStream from "lib/hooks/useMediaStream";
+import callServices from "lib/services/callServices";
 import React, { useEffect, useRef, useState } from "react";
 import { useRecoilState } from "recoil";
 import {
@@ -18,14 +20,27 @@ import {
 
 interface IProps {
   roomType: string;
+  from: string;
+  to: string;
 }
 
-const CallRoom = ({ roomType }: IProps) => {
+const CallRoom = ({ roomType, from, to }: IProps) => {
   const [videoMuted, setVideoMuted] = useState(false);
   const [audioMuted, setAudioMuted] = useState(false);
+
   const [isMinified, setIsMinified] = useRecoilState(minifyCallRoomAtom);
-  const { videoRef, cameraStream, mediaRecorder, blobRecorded, setStreamType } =
-    useMediaStream();
+
+  const {
+    videoContainerRef,
+    cameraStream,
+    mediaRecorder,
+    blobRecorded,
+    setStreamType,
+    streamType,
+    cancelCall,
+    isinComingCall,
+    answerCall,
+  } = useCallContext();
 
   const {
     onTouchmouve,
@@ -37,20 +52,20 @@ const CallRoom = ({ roomType }: IProps) => {
   } = useMouveOnScreen();
 
   const onRemoveVideo = () => {
-    setStreamType({ video: false, audio: true });
-    setAudioMuted(!audioMuted);
+    setStreamType({ video: !streamType.video, audio: true });
+    setVideoMuted(!videoMuted);
   };
 
   const onRemoveAudio = () => {
-    setStreamType({ video: true, audio: false });
-    setVideoMuted(!videoMuted);
+    setStreamType({ video: true, audio: !streamType.audio });
+    setAudioMuted(!audioMuted);
   };
 
   return (
     <div
       className={
         isMoving
-          ? `h-full w-full bg-opacity-40 z-30 fixed top-0 left-0 bottom-0 right-0 transition-all ${
+          ? `h-full w-full bg-opacity-40 z-50 fixed top-0 left-0 bottom-0 right-0 transition-all ${
               patternOutsideview
                 ? "bg-red-400 border border-red-600"
                 : "bg-black"
@@ -77,20 +92,41 @@ const CallRoom = ({ roomType }: IProps) => {
           </div>
         )}
 
+        {isinComingCall && (
+          <div
+            className={`flex flex-col z-20 justify-center top-0 items-center h-full w-full absolute ${
+              isMinified ? "hidden" : ""
+            }`}
+          >
+            <h2 className="text-center text-white py-2 font-bold">
+              Incoming call from {from}
+            </h2>
+            <div>
+              <img
+                src={
+                  "https://static1.makeuseofimages.com/wordpress/wp-content/uploads/2022/03/bored-ape-nft.jpg"
+                }
+                alt={from}
+                className="h-40 w-40 rounded-full object-cover"
+              />
+            </div>
+          </div>
+        )}
+
         <div
           className={` ${
             !isMinified ? "absolute top-0 bottom-0 left-0 right-0" : "hidden"
           }`}
         >
           <video
-            ref={videoRef}
+            ref={videoContainerRef}
             className="w-full h-full object-cover"
             autoPlay
             controls={false}
           ></video>
         </div>
 
-        <div className="z-20">
+        <div className="z-20 bg-white rounded-t-2xl">
           <ul
             className={`${
               isMinified
@@ -106,27 +142,18 @@ const CallRoom = ({ roomType }: IProps) => {
                 className={
                   isMoving
                     ? "hidden transition-all"
-                    : "bg-red-600 text-light p-5 rounded-full transition-all"
+                    : "bg-black text-light p-5 rounded-full transition-all"
                 }
               >
                 {audioMuted ? <VMicrophoneOff /> : <VMicrophone />}
               </li>
             )}
             <li
-              className={
-                isMoving
-                  ? "hidden transition-all"
-                  : "bg-green-600 text-light p-5 rounded-full transition-all"
-              }
-            >
-              <VPhone />
-            </li>
-            <li
               onClick={onRemoveVideo}
               className={
                 isMoving
                   ? "hidden transition-all"
-                  : "bg-red-600 text-light p-5 rounded-full transition-all"
+                  : "bg-black text-light p-5 rounded-full transition-all"
               }
             >
               {videoMuted ? <VVideoOff /> : <VVideo />}
@@ -142,14 +169,25 @@ const CallRoom = ({ roomType }: IProps) => {
               {isMinified ? <VZoomOut /> : <VArrowMinify />}
             </li>
 
+            <li
+              onClick={() => {
+                !isinComingCall ? cancelCall() : answerCall();
+              }}
+              className={
+                isMoving
+                  ? "hidden transition-all"
+                  : "bg-red-600 text-light p-5 rounded-full transition-all"
+              }
+            >
+              <VPhone />
+            </li>
+
             {isMinified && (
               <div
                 onTouchEnd={(e) => {
                   onTouchend(e);
                   if (patternOutsideview && cameraStream.current) {
-                    cameraStream.current
-                      .getTracks()
-                      .forEach((track: { stop: () => any }) => track.stop());
+                    cancelCall();
                   }
                 }}
                 onTouchMove={onTouchmouve}
@@ -166,5 +204,10 @@ const CallRoom = ({ roomType }: IProps) => {
     </div>
   );
 };
+
+//   cameraStream.current
+//     .getTracks()
+//     .forEach((track: { stop: () => any }) => track.stop());
+// }
 
 export default CallRoom;
