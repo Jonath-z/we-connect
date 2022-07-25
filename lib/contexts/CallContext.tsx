@@ -66,6 +66,7 @@ const CallProvider = ({ children }: any) => {
   const mediaRecorder = useRef<any>(null);
   const blobRecorded = useRef<any>([]);
   const [isinComingCall, setIsinComingCall] = useState(false);
+  const connectionRef = useRef<Peer.Instance>();
 
   const [inComingCallInfo, setinComingCallInfo] = useState({
     from: "",
@@ -106,7 +107,11 @@ const CallProvider = ({ children }: any) => {
     getMediaSteam();
     setIsinComingCall(false);
 
-    const peer = new Peer({ initiator: true, stream: cameraStream.current });
+    const peer = new Peer({
+      initiator: true,
+      stream: cameraStream.current,
+      trickle: false,
+    });
 
     peer.on("signal", (data) => {
       socket.emit("requestCall", {
@@ -118,27 +123,28 @@ const CallProvider = ({ children }: any) => {
       console.log("outgoing call", data);
     });
 
-    // callServices.requestCall("jonathan", "john doe", cameraStream.current);
+    peer.on("stream", (currentStream) => {
+      if (videoContainerRef.current)
+        videoContainerRef.current.srcObject = currentStream;
+
+      console.log("request get stream", currentStream);
+    });
 
     socket.on("callAccepted", (data) => {
       peer.signal(data.signal);
     });
-  };
 
-  const cancelCall = () => {
-    console.log("canceled");
-    socket.emit("cancelCall", { from: "jonathan", to: "john doe" });
-
-    openCallRoom(false);
-
-    cameraStream.current
-      .getTracks()
-      .forEach((track: { stop: () => any }) => track.stop());
+    connectionRef.current = peer;
   };
 
   const answerCall = () => {
     console.log("answered");
-    const peer = new Peer({ initiator: false, stream: cameraStream.current });
+    getMediaSteam();
+    const peer = new Peer({
+      initiator: false,
+      stream: cameraStream.current,
+      trickle: false,
+    });
 
     peer.on("signal", (data) => {
       socket.emit("answerCall", {
@@ -146,22 +152,44 @@ const CallProvider = ({ children }: any) => {
         to: "john doe",
         signal: data,
       });
+
+      console.log("answer signal", data);
     });
 
     peer.on("stream", (currentStream) => {
       if (videoContainerRef.current)
         videoContainerRef.current.srcObject = currentStream;
 
-      console.log("current stream", currentStream);
+      console.log("current stream in answer", currentStream);
     });
 
     if (inComingCallInfo.signal) peer.signal(inComingCallInfo.signal);
+
+    connectionRef.current = peer;
+  };
+
+  const cancelCall = () => {
+    console.log("canceled");
+    socket.emit("cancelCall", { from: "jonathan", to: "john doe" });
+
+    openCallRoom(false);
+    setIsinComingCall(false);
+
+    if (cameraStream.current) {
+      cameraStream.current
+        .getTracks()
+        .forEach((track: { stop: () => any }) => track.stop());
+    }
+
+    if (connectionRef.current) {
+      connectionRef.current?.destroy();
+    }
   };
 
   useEffect(() => {
     socket.on("incomingCall", (data) => {
       console.log("incoming data", data);
-      if (data.from === "jonathan") {
+      if (data.to === "john doe") {
         setIsinComingCall(true);
         openCallRoom(true);
         setinComingCallInfo({
@@ -171,7 +199,9 @@ const CallProvider = ({ children }: any) => {
         });
       }
     });
+  }, []);
 
+  useEffect(() => {
     socket.on("leaveCall", (data) => {
       console.log("leave call data", data);
       if (data.to === "john doe") {
@@ -179,6 +209,8 @@ const CallProvider = ({ children }: any) => {
         cameraStream.current
           .getTracks()
           .forEach((track: { stop: () => any }) => track.stop());
+
+        connectionRef.current?.destroy();
       }
     });
   }, []);

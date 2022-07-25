@@ -172,6 +172,7 @@ const CallRoom = ({ roomType, from, to }: IProps) => {
             <li
               onClick={() => {
                 !isinComingCall ? cancelCall() : answerCall();
+                // if(!isinComingCall)
               }}
               className={
                 isMoving
