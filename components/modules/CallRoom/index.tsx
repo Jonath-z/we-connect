@@ -1,10 +1,8 @@
 /* eslint-disable @next/next/no-img-element */
-// import useMouveOnScreen from "lib/hooks/useMouveOnScreen";
 import { minifyCallRoomAtom } from "lib/atoms";
 import { useCallContext } from "lib/contexts/CallContext";
 import { useMouveOnScreen } from "lib/contexts/MouveOnScreenContext";
-import callServices from "lib/services/callServices";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useState } from "react";
 import { useRecoilState } from "recoil";
 import {
   VArrowLeft,
@@ -12,11 +10,12 @@ import {
   VVideoOff,
   VMicrophone,
   VMicrophoneOff,
-  VPhone,
   VVideo,
   VDragAndDrop,
   VZoomOut,
 } from "../_modules/vectors";
+import AcceptCallButton from "./___module/AcceptCallButton";
+import RejectCallButton from "./___module/RejectCallButton";
 
 interface IProps {
   roomType: string;
@@ -40,6 +39,7 @@ const CallRoom = ({ roomType, from, to }: IProps) => {
     cancelCall,
     isinComingCall,
     answerCall,
+    callAccepted,
   } = useCallContext();
 
   const {
@@ -92,7 +92,7 @@ const CallRoom = ({ roomType, from, to }: IProps) => {
           </div>
         )}
 
-        {isinComingCall && (
+        {isinComingCall && !callAccepted && (
           <div
             className={`flex flex-col z-20 justify-center top-0 items-center h-full w-full absolute ${
               isMinified ? "hidden" : ""
@@ -169,18 +169,14 @@ const CallRoom = ({ roomType, from, to }: IProps) => {
               {isMinified ? <VZoomOut /> : <VArrowMinify />}
             </li>
 
-            <li
-              onClick={() => {
-                !isinComingCall ? cancelCall() : answerCall();
-                // if(!isinComingCall)
-              }}
-              className={
-                isMoving
-                  ? "hidden transition-all"
-                  : "bg-red-600 text-light p-5 rounded-full transition-all"
-              }
-            >
-              <VPhone />
+            <li className={isMoving ? "hidden transition-all" : ""}>
+              {isinComingCall && !callAccepted && (
+                <AcceptCallButton onClick={answerCall} />
+              )}
+
+              {(!isinComingCall || callAccepted) && (
+                <RejectCallButton onClick={cancelCall} />
+              )}
             </li>
 
             {isMinified && (
@@ -205,10 +201,5 @@ const CallRoom = ({ roomType, from, to }: IProps) => {
     </div>
   );
 };
-
-//   cameraStream.current
-//     .getTracks()
-//     .forEach((track: { stop: () => any }) => track.stop());
-// }
 
 export default CallRoom;

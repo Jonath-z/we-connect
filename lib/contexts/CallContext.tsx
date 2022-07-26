@@ -1,5 +1,4 @@
 import { openCallRoomAtom } from "lib/atoms";
-import callServices from "lib/services/callServices";
 import React, {
   createContext,
   Dispatch,
@@ -22,6 +21,7 @@ interface ICallContext {
   mediaRecorder: any | null;
   blobRecorded: React.MutableRefObject<any> | null;
   isinComingCall: boolean;
+  callAccepted: boolean;
   setStreamType: Dispatch<SetStateAction<{ video: boolean; audio: boolean }>>;
   streamType: {
     video: boolean;
@@ -42,6 +42,7 @@ const defaultContext: ICallContext = {
   mediaRecorder: null,
   blobRecorded: null,
   isinComingCall: false,
+  callAccepted: false,
   streamType: {
     video: true,
     audio: true,
@@ -66,6 +67,7 @@ const CallProvider = ({ children }: any) => {
   const mediaRecorder = useRef<any>(null);
   const blobRecorded = useRef<any>([]);
   const [isinComingCall, setIsinComingCall] = useState(false);
+  const [callAccepted, setCallAccepted] = useState(false);
   const connectionRef = useRef<Peer.Instance>();
 
   const [inComingCallInfo, setinComingCallInfo] = useState({
@@ -166,6 +168,7 @@ const CallProvider = ({ children }: any) => {
     if (inComingCallInfo.signal) peer.signal(inComingCallInfo.signal);
 
     connectionRef.current = peer;
+    setCallAccepted(true);
   };
 
   const cancelCall = () => {
@@ -174,15 +177,12 @@ const CallProvider = ({ children }: any) => {
 
     openCallRoom(false);
     setIsinComingCall(false);
+    setCallAccepted(false);
 
     if (cameraStream.current) {
       cameraStream.current
         .getTracks()
         .forEach((track: { stop: () => any }) => track.stop());
-    }
-
-    if (connectionRef.current) {
-      connectionRef.current?.destroy();
     }
   };
 
@@ -197,6 +197,11 @@ const CallProvider = ({ children }: any) => {
           to: data.to,
           signal: data.signal,
         });
+      }
+
+      if (!callAccepted) {
+        navigator.vibrate([400, 400]);
+        console.log("it's vibrating");
       }
     });
   }, []);
@@ -223,6 +228,7 @@ const CallProvider = ({ children }: any) => {
         cameraStream,
         mediaRecorder,
         isinComingCall,
+        callAccepted,
         requestCall,
         cancelCall,
         answerCall,
