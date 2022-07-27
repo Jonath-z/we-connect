@@ -10,6 +10,7 @@ import React, {
   useState,
 } from "react";
 import { useSetRecoilState } from "recoil";
+
 import Peer from "simple-peer";
 import { io } from "socket.io-client";
 
@@ -66,9 +67,12 @@ const CallProvider = ({ children }: any) => {
   const videoContainerRef = useRef<HTMLVideoElement>(null);
   const mediaRecorder = useRef<any>(null);
   const blobRecorded = useRef<any>([]);
+  const connectionRef = useRef<Peer.Instance>();
+  const phoneCallAudioRingRef = useRef<HTMLAudioElement>(null);
+  const cancelCallAudioRingRef = useRef<HTMLAudioElement>(null);
+
   const [isinComingCall, setIsinComingCall] = useState(false);
   const [callAccepted, setCallAccepted] = useState(false);
-  const connectionRef = useRef<Peer.Instance>();
 
   const [inComingCallInfo, setinComingCallInfo] = useState({
     from: "",
@@ -104,10 +108,31 @@ const CallProvider = ({ children }: any) => {
     })();
   }, [streamType]);
 
+  const ringing = () => {
+    if (phoneCallAudioRingRef.current) {
+      phoneCallAudioRingRef.current.play();
+    }
+  };
+
+  const stopRinging = () => {
+    if (phoneCallAudioRingRef.current) {
+      phoneCallAudioRingRef.current.pause();
+    }
+  };
+
+  const leaveCallRingsHandler = () => {
+    stopRinging();
+    if (cancelCallAudioRingRef.current) {
+      cancelCallAudioRingRef.current.play();
+    }
+  };
+
   const requestCall = () => {
     openCallRoom(true);
     getMediaSteam();
     setIsinComingCall(false);
+
+    ringing();
 
     const peer = new Peer({
       initiator: true,
@@ -134,14 +159,16 @@ const CallProvider = ({ children }: any) => {
 
     socket.on("callAccepted", (data) => {
       peer.signal(data.signal);
+
+      stopRinging();
     });
 
     connectionRef.current = peer;
   };
 
   const answerCall = () => {
-    console.log("answered");
     getMediaSteam();
+
     const peer = new Peer({
       initiator: false,
       stream: cameraStream.current,
@@ -174,6 +201,8 @@ const CallProvider = ({ children }: any) => {
   const cancelCall = () => {
     console.log("canceled");
     socket.emit("cancelCall", { from: "jonathan", to: "john doe" });
+
+    leaveCallRingsHandler();
 
     openCallRoom(false);
     setIsinComingCall(false);
@@ -209,11 +238,17 @@ const CallProvider = ({ children }: any) => {
   useEffect(() => {
     socket.on("leaveCall", (data) => {
       console.log("leave call data", data);
+
+      leaveCallRingsHandler();
+
       if (data.to === "john doe") {
         openCallRoom(false);
-        cameraStream.current
-          .getTracks()
-          .forEach((track: { stop: () => any }) => track.stop());
+
+        if (cameraStream.current) {
+          cameraStream.current
+            .getTracks()
+            .forEach((track: { stop: () => any }) => track.stop());
+        }
 
         connectionRef.current?.destroy();
       }
@@ -237,6 +272,19 @@ const CallProvider = ({ children }: any) => {
         inComingCallInfo,
       }}
     >
+      <audio
+        src="/phone-call-ring.wav"
+        ref={phoneCallAudioRingRef}
+        onEnded={cancelCall}
+        className="hidden"
+      />
+
+      <audio
+        src="/cancel-call-ring.wav"
+        ref={cancelCallAudioRingRef}
+        loop={false}
+        className="hidden"
+      />
       {children}
     </CallContext.Provider>
   );

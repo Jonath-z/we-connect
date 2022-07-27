@@ -183,7 +183,7 @@ const CallRoom = ({ roomType, from, to }: IProps) => {
               <div
                 onTouchEnd={(e) => {
                   onTouchend(e);
-                  if (patternOutsideview && cameraStream.current) {
+                  if (patternOutsideview) {
                     cancelCall();
                   }
                 }}
