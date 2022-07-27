@@ -1,6 +1,12 @@
 import { useCallContext } from "lib/contexts/CallContext";
 import { gunServices } from "lib/services/gunService";
-import React, { Dispatch, SetStateAction, useRef, useState } from "react";
+import React, {
+  Dispatch,
+  SetStateAction,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
 import { VPlus, VSend } from "../_modules/vectors";
 
 interface IProps {
@@ -8,15 +14,41 @@ interface IProps {
   setIsOpenVideoRecoder: Dispatch<SetStateAction<boolean>>;
 }
 
-const VideoRecoder = ({
+const VideoMessageRecoder = ({
   isOpenVidepRecorder,
   setIsOpenVideoRecoder,
 }: IProps) => {
   const [videoLocalLink, setVideoLocalLink] = useState("");
   const [videoBased64String, setVideoBased64Strig] = useState("");
 
-  const { videoContainerRef, mediaRecorder, blobRecorded, cameraStream } =
-    useCallContext();
+  const cameraStream = useRef<any>(null);
+  const videoContainerRef = useRef<HTMLVideoElement>(null);
+  const mediaRecorder = useRef<any>(null);
+  const blobRecorded = useRef<any>([]);
+
+  useEffect(() => {
+    (async () => {
+      cameraStream.current = await navigator.mediaDevices.getUserMedia({
+        audio: true,
+        video: true,
+      });
+
+      if (videoContainerRef.current)
+        videoContainerRef.current.srcObject = cameraStream.current;
+
+      console.log("media stream", cameraStream.current);
+
+      mediaRecorder.current = new MediaRecorder(cameraStream.current, {
+        mimeType: "video/webm",
+      });
+
+      mediaRecorder.current.addEventListener("dataavailable", (e: any) => {
+        blobRecorded.current.push(e.data);
+      });
+
+      mediaRecorder.current.start(1000);
+    })();
+  }, []);
 
   const stopRecoder = () => {
     if (blobRecorded?.current) {
@@ -91,4 +123,4 @@ const VideoRecoder = ({
   );
 };
 
-export default VideoRecoder;
+export default VideoMessageRecoder;

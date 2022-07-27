@@ -4,7 +4,7 @@ import { VAttachement, VCamera, VSend } from "../_modules/vectors";
 import { useRecoilState } from "recoil";
 import { messagesAtom } from "lib/atoms";
 import { gunServices } from "lib/services/gunService";
-import VideoRecoder from "../VideoRecoder";
+import VideoMessageRecorder from "../VideoMessageRecoder";
 
 const InputMessage = () => {
   const [messageValue, setMessageValue] = useState("");
@@ -105,7 +105,7 @@ const InputMessage = () => {
         </div>
       </div>
       {isOpenVidepRecorder && (
-        <VideoRecoder
+        <VideoMessageRecorder
           isOpenVidepRecorder={isOpenVidepRecorder}
           setIsOpenVideoRecoder={setIsOpenVideoRecorder}
         />

@@ -25,7 +25,7 @@ const MessageCard = ({ messages }: IProps) => {
   const { id } = user;
   return (
     <div
-      className={`my-2 py-1 px-2 w-fit max-w-xl mobile:max-w-[90%] transition-all break-words flex flex-col ${
+      className={`my-2 py-2 px-2 w-fit max-w-xl mobile:max-w-[90%] transition-all break-words flex flex-col ${
         id === senderId
           ? "bg-white rounded-t-xl rounded-br-xl"
           : "bg-dark text-light ml-auto  rounded-t-xl rounded-bl-xl"
@@ -37,12 +37,8 @@ const MessageCard = ({ messages }: IProps) => {
         </p>
       )}
       {isVideo && (
-        <video autoPlay={false} controls={true}>
-          <source
-            src={base64ToObjectUrl(message)}
-            type="video/webm"
-            className="rounded-lg"
-          />
+        <video autoPlay={false} controls={true} className="rounded-lg">
+          <source src={base64ToObjectUrl(message)} type="video/webm" />
         </video>
       )}
       {isImage && (
