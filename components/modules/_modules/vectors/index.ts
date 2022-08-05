@@ -7,10 +7,10 @@ import {
   BsFillCameraVideoFill as VVideo,
   BsChatSquareDotsFill as VChat,
   BsDot as VDot,
-  BsCamera as VCamera,
   BsShopWindow as VShop,
   BsWallet as VWallet,
   BsFillCameraVideoOffFill as VVideoOff,
+  BsCamera as VCamera,
   BsMicFill as VMicrophone,
   BsFillMicMuteFill as VMicrophoneOff,
 } from "react-icons/bs";
@@ -22,7 +22,11 @@ import {
 } from "react-icons/md";
 
 import { AiOutlineSearch as VSearch } from "react-icons/ai";
-import { HiPhone as VPhone, HiOutlinePlusSm as VPlus } from "react-icons/hi";
+import {
+  HiPhone as VPhone,
+  HiOutlinePlusSm as VPlus,
+  HiCamera as VMessagevideoCamera,
+} from "react-icons/hi";
 import {
   BiDotsVerticalRounded as VDotVerticalMenu,
   BiTrashAlt as VTrash,
@@ -77,4 +81,5 @@ export {
   VArrowMinify,
   VDragAndDrop,
   VZoomOut,
+  VMessagevideoCamera,
 };

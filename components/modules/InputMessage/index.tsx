@@ -1,6 +1,11 @@
 import useInputAutoResize from "lib/hooks/useInputAutoResize";
 import React, { ChangeEventHandler, useEffect, useRef, useState } from "react";
-import { VAttachement, VCamera, VSend } from "../_modules/vectors";
+import {
+  VAttachement,
+  VCamera,
+  VMessagevideoCamera,
+  VSend,
+} from "../_modules/vectors";
 import { useRecoilState } from "recoil";
 import { messagesAtom } from "lib/atoms";
 import { gunServices } from "lib/services/gunService";
@@ -71,7 +76,7 @@ const InputMessage = () => {
 
   return (
     <>
-      <div className="flex fixed bottom-0 w-full bg-gray-50 justify-between items-center py-3 px-2">
+      <div className="flex fixed bottom-0 w-full bg-gray-50 justify-between items-center p-2">
         <button onClick={onSendFile} className="text-xl -rotate-45">
           <VAttachement />
         </button>
@@ -89,19 +94,27 @@ const InputMessage = () => {
           id="input-file"
           onChange={onFileChange}
         />
-        <div className="flex justify-center items-center">
-          {messageValue ? (
-            <button className="text-2xl" onClick={onSendMessage}>
-              <VSend />
-            </button>
-          ) : (
-            <button
-              onClick={() => setIsOpenVideoRecorder(!isOpenVidepRecorder)}
-              className="text-xl rounded-full"
-            >
-              <VCamera />
-            </button>
-          )}
+        <div className="bg-black text-white h-7 w-7 overflow-hidden flex justify-center items-center p-5 rounded-full">
+          <button
+            className={`${
+              messageValue
+                ? "scale-100 text-xl transition-all"
+                : "scale-0 text-[0px]"
+            }`}
+            onClick={onSendMessage}
+          >
+            <VSend />
+          </button>
+          <button
+            onClick={() => setIsOpenVideoRecorder(!isOpenVidepRecorder)}
+            className={`${
+              messageValue
+                ? "scale-0 text-[0px]"
+                : "scale-100 text-xl transition-all "
+            }`}
+          >
+            <VMessagevideoCamera />
+          </button>
         </div>
       </div>
       {isOpenVidepRecorder && (

@@ -1,8 +1,7 @@
 import CallRoom from "components/modules/CallRoom";
 import { openCallRoomAtom, showChatAtom } from "lib/atoms";
 import { useCallContext } from "lib/contexts/CallContext";
-import callServices from "lib/services/callServices";
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useRecoilState } from "recoil";
 import ChatSection from "./ChatSection";
 import ContactSection from "./ContactSection";
