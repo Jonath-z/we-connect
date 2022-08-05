@@ -4,7 +4,7 @@ import { useRecoilState, useRecoilValue } from "recoil";
 import { bottomNavAtom, showChatAtom } from "lib/atoms";
 import BottomNav from "components/modules/BottomNav";
 import Stories from "../../modules/Strories";
-import Chats from "../../modules/Chats";
+import ContactsContainer from "../../modules/ContactsContainer";
 import Contacts from "../../modules/Contacts";
 import Calls from "components/modules/Calls";
 import Storyview from "components/modules/StoryView";
@@ -15,7 +15,7 @@ const ContactSection = () => {
   const [isStoryView, setIsStoryView] = useState(false);
   const bottomNavSelectedOption = useRecoilValue(bottomNavAtom);
 
-  const onShowChat = () => {
+  const onOpenChat = () => {
     setIsChatShowed(true);
   };
 
@@ -63,11 +63,11 @@ const ContactSection = () => {
         </div>
       </div>
       {bottomNavSelectedOption.chat && (
-        <Chats onShowChat={onShowChat} isSeeAll={isSeeAll} />
+        <ContactsContainer onOpenChat={onOpenChat} isSeeAll={isSeeAll} />
       )}
-      {bottomNavSelectedOption.contact && <Contacts onShowChat={onShowChat} />}
+      {bottomNavSelectedOption.contact && <Contacts onOpenChat={onOpenChat} />}
 
-      {bottomNavSelectedOption.calls && <Calls onShowChat={onShowChat} />}
+      {bottomNavSelectedOption.calls && <Calls onOpenChat={onOpenChat} />}
       <div className={`${isSeeAll && "hidden"}`}>
         <BottomNav />
       </div>

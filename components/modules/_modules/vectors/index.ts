@@ -13,6 +13,7 @@ import {
   BsCamera as VCamera,
   BsMicFill as VMicrophone,
   BsFillMicMuteFill as VMicrophoneOff,
+  BsCardImage as VImageCard,
 } from "react-icons/bs";
 import {
   MdOutlineMailOutline as VEmail,
@@ -82,4 +83,5 @@ export {
   VDragAndDrop,
   VZoomOut,
   VMessagevideoCamera,
+  VImageCard,
 };

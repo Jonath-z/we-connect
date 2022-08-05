@@ -2,7 +2,7 @@
 import { minifyCallRoomAtom } from "lib/atoms";
 import { useCallContext } from "lib/contexts/CallContext";
 import { useMouveOnScreen } from "lib/contexts/MouveOnScreenContext";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
 import {
   VArrowLeft,
@@ -29,11 +29,13 @@ const CallRoom = ({ roomType, from, to }: IProps) => {
 
   const [isMinified, setIsMinified] = useRecoilState(minifyCallRoomAtom);
 
+  useEffect(() => {
+    console.log("room Type", roomType);
+  }, [roomType]);
+
   const {
-    videoContainerRef,
-    cameraStream,
-    mediaRecorder,
-    blobRecorded,
+    streamedVideoContainerRef,
+    transimittedVideoContainerRef,
     setStreamType,
     streamType,
     cancelCall,
@@ -113,18 +115,33 @@ const CallRoom = ({ roomType, from, to }: IProps) => {
           </div>
         )}
 
-        <div
-          className={` ${
-            !isMinified ? "absolute top-0 bottom-0 left-0 right-0" : "hidden"
-          }`}
-        >
-          <video
-            ref={videoContainerRef}
-            className="w-full h-full object-cover"
-            autoPlay
-            controls={false}
-          ></video>
-        </div>
+        {roomType === "video" ? (
+          <div className={` ${!isMinified ? "" : "hidden"}`}>
+            <video
+              ref={streamedVideoContainerRef}
+              className="w-full h-full object-cover absolute top-0 bottom-0 left-0 right-0"
+              autoPlay
+              controls={false}
+            ></video>
+
+            <video
+              ref={transimittedVideoContainerRef}
+              className="w-32 h-64 object-cover border shadow-md fixed ml-3 rounded-xl"
+              autoPlay
+              controls={false}
+            ></video>
+          </div>
+        ) : (
+          <div className="flex flex-col z-20 justify-center top-0 items-center h-full w-full absolute">
+            <img
+              src={
+                "https://static1.makeuseofimages.com/wordpress/wp-content/uploads/2022/03/bored-ape-nft.jpg"
+              }
+              alt={from}
+              className="h-40 w-40 rounded-full object-cover"
+            />
+          </div>
+        )}
 
         <div className="z-20 bg-white rounded-t-2xl">
           <ul
@@ -148,16 +165,18 @@ const CallRoom = ({ roomType, from, to }: IProps) => {
                 {audioMuted ? <VMicrophoneOff /> : <VMicrophone />}
               </li>
             )}
-            <li
-              onClick={onRemoveVideo}
-              className={
-                isMoving
-                  ? "hidden transition-all"
-                  : "bg-black text-light p-5 rounded-full transition-all"
-              }
-            >
-              {videoMuted ? <VVideoOff /> : <VVideo />}
-            </li>
+            {roomType === "video" && (
+              <li
+                onClick={onRemoveVideo}
+                className={
+                  isMoving
+                    ? "hidden transition-all"
+                    : "bg-black text-light p-5 rounded-full transition-all"
+                }
+              >
+                {videoMuted ? <VVideoOff /> : <VVideo />}
+              </li>
+            )}
             <li
               onClick={() => setIsMinified(!isMinified)}
               className={
@@ -171,7 +190,7 @@ const CallRoom = ({ roomType, from, to }: IProps) => {
 
             <li className={isMoving ? "hidden transition-all" : ""}>
               {isinComingCall && !callAccepted && (
-                <AcceptCallButton onClick={answerCall} />
+                <AcceptCallButton onClick={() => answerCall(roomType)} />
               )}
 
               {(!isinComingCall || callAccepted) && (

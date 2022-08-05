@@ -7,6 +7,8 @@ export type TMessage = {
   message: string;
   date: string;
   time: string;
+  isVideo: boolean;
+  isImage: boolean;
 };
 
 export type TStory = {

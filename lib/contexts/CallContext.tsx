@@ -6,10 +6,11 @@ import React, {
   useCallback,
   useContext,
   useEffect,
+  useMemo,
   useRef,
   useState,
 } from "react";
-import { useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 
 import Peer from "simple-peer";
 import { io } from "socket.io-client";
@@ -18,7 +19,8 @@ export const socket = io("http://localhost:3300");
 
 interface ICallContext {
   cameraStream: any | null;
-  videoContainerRef: React.RefObject<HTMLVideoElement> | null;
+  streamedVideoContainerRef: React.RefObject<HTMLVideoElement> | null;
+  transimittedVideoContainerRef: React.RefObject<HTMLVideoElement> | null;
   mediaRecorder: any | null;
   blobRecorded: React.MutableRefObject<any> | null;
   isinComingCall: boolean;
@@ -32,14 +34,15 @@ interface ICallContext {
     from: string;
     to: string;
   };
-  requestCall: () => void;
+  requestCall: (roomType: string) => void;
+  answerCall: (roomType: string) => void;
   cancelCall: () => void;
-  answerCall: () => void;
 }
 
 const defaultContext: ICallContext = {
   cameraStream: null,
-  videoContainerRef: null,
+  streamedVideoContainerRef: null,
+  transimittedVideoContainerRef: null,
   mediaRecorder: null,
   blobRecorded: null,
   isinComingCall: false,
@@ -64,7 +67,8 @@ export const useCallContext = () => useContext(CallContext);
 
 const CallProvider = ({ children }: any) => {
   const cameraStream = useRef<any>(null);
-  const videoContainerRef = useRef<HTMLVideoElement>(null);
+  const streamedVideoContainerRef = useRef<HTMLVideoElement>(null);
+  const transimittedVideoContainerRef = useRef<HTMLVideoElement>(null);
   const mediaRecorder = useRef<any>(null);
   const blobRecorded = useRef<any>([]);
   const connectionRef = useRef<Peer.Instance>();
@@ -85,28 +89,37 @@ const CallProvider = ({ children }: any) => {
     audio: true,
   });
 
-  const openCallRoom = useSetRecoilState(openCallRoomAtom);
+  const [callRoomOpened, openCallRoom] = useRecoilState(openCallRoomAtom);
 
-  const getMediaSteam = useCallback(() => {
-    (async () => {
-      cameraStream.current = await navigator.mediaDevices.getUserMedia(
-        streamType
-      );
+  const getMediaSteam = async (callType: string) => {
+    cameraStream.current = await navigator.mediaDevices.getUserMedia(
+      callType === "video"
+        ? streamType
+        : {
+            video: false,
+            audio: true,
+          }
+    );
 
-      if (videoContainerRef.current)
-        videoContainerRef.current.srcObject = cameraStream.current;
+    console.log("camera stream when getting media", cameraStream.current);
 
-      mediaRecorder.current = new MediaRecorder(cameraStream.current, {
-        mimeType: "video/webm",
-      });
+    if (transimittedVideoContainerRef.current) {
+      console.log("transmitted stream", cameraStream.current);
+      transimittedVideoContainerRef.current.srcObject = cameraStream.current;
+    }
 
-      mediaRecorder.current.addEventListener("dataavailable", (e: any) => {
-        blobRecorded.current.push(e.data);
-      });
+    mediaRecorder.current = new MediaRecorder(cameraStream.current, {
+      mimeType: "video/webm",
+    });
 
-      mediaRecorder.current.start(1000);
-    })();
-  }, [streamType]);
+    mediaRecorder.current.addEventListener("dataavailable", (e: any) => {
+      blobRecorded.current.push(e.data);
+    });
+
+    mediaRecorder.current.start(1000);
+
+    return cameraStream.current;
+  };
 
   const ringing = () => {
     if (phoneCallAudioRingRef.current) {
@@ -127,51 +140,57 @@ const CallProvider = ({ children }: any) => {
     }
   };
 
-  const requestCall = () => {
-    openCallRoom(true);
-    getMediaSteam();
-    setIsinComingCall(false);
+  const requestCall = useCallback(
+    async (roomType: string) => {
+      openCallRoom({ roomType, isOpened: true });
+      const stream = await getMediaSteam(roomType);
+      setIsinComingCall(false);
 
-    ringing();
+      ringing();
 
-    const peer = new Peer({
-      initiator: true,
-      stream: cameraStream.current,
-      trickle: false,
-    });
-
-    peer.on("signal", (data) => {
-      socket.emit("requestCall", {
-        from: "jonathan",
-        to: "john doe",
-        signal: data,
+      const peer = new Peer({
+        initiator: true,
+        stream,
+        trickle: false,
       });
 
-      console.log("outgoing call", data);
-    });
+      peer.on("signal", (data) => {
+        socket.emit("requestCall", {
+          from: "jonathan",
+          to: "john doe",
+          signal: data,
+          callType: roomType,
+        });
+      });
 
-    peer.on("stream", (currentStream) => {
-      if (videoContainerRef.current)
-        videoContainerRef.current.srcObject = currentStream;
+      peer.on("stream", (currentStream) => {
+        if (streamedVideoContainerRef.current)
+          streamedVideoContainerRef.current.srcObject = currentStream;
 
-      console.log("request get stream", currentStream);
-    });
+        console.log("request get stream", currentStream);
+      });
 
-    socket.on("callAccepted", (data) => {
-      peer.signal(data.signal);
+      socket.on("callAccepted", (data) => {
+        console.log(
+          "call signal in request after accepting must be response",
+          data.signal
+        );
+        peer.signal(data.signal);
 
-      stopRinging();
-    });
+        stopRinging();
+      });
 
-    connectionRef.current = peer;
-  };
+      connectionRef.current = peer;
+    },
+    [streamType]
+  );
 
-  const answerCall = () => {
-    getMediaSteam();
+  const answerCall = async (roomType: string) => {
+    const stream = await getMediaSteam(roomType);
 
     const peer = new Peer({
       initiator: false,
-      stream: cameraStream.current,
+      stream,
       trickle: false,
     });
 
@@ -180,22 +199,31 @@ const CallProvider = ({ children }: any) => {
         from: "jonathan",
         to: "john doe",
         signal: data,
+        roomType,
       });
-
-      console.log("answer signal", data);
     });
 
     peer.on("stream", (currentStream) => {
-      if (videoContainerRef.current)
-        videoContainerRef.current.srcObject = currentStream;
+      if (streamedVideoContainerRef.current)
+        streamedVideoContainerRef.current.srcObject = currentStream;
 
       console.log("current stream in answer", currentStream);
     });
 
-    if (inComingCallInfo.signal) peer.signal(inComingCallInfo.signal);
+    if (inComingCallInfo.signal) {
+      console.log(
+        "call signal in answer must be request",
+        inComingCallInfo.signal
+      );
+      peer.signal(inComingCallInfo.signal);
+    }
 
     connectionRef.current = peer;
     setCallAccepted(true);
+  };
+
+  const closeCallRoom = () => {
+    openCallRoom({ roomType: "audio" || "video", isOpened: false });
   };
 
   const cancelCall = () => {
@@ -203,8 +231,8 @@ const CallProvider = ({ children }: any) => {
     socket.emit("cancelCall", { from: "jonathan", to: "john doe" });
 
     leaveCallRingsHandler();
+    closeCallRoom();
 
-    openCallRoom(false);
     setIsinComingCall(false);
     setCallAccepted(false);
 
@@ -213,6 +241,8 @@ const CallProvider = ({ children }: any) => {
         .getTracks()
         .forEach((track: { stop: () => any }) => track.stop());
     }
+
+    connectionRef.current?.destroy();
   };
 
   useEffect(() => {
@@ -220,7 +250,7 @@ const CallProvider = ({ children }: any) => {
       console.log("incoming data", data);
       if (data.to === "john doe") {
         setIsinComingCall(true);
-        openCallRoom(true);
+        openCallRoom({ roomType: data.callType, isOpened: true });
         setinComingCallInfo({
           from: data.from,
           to: data.to,
@@ -233,16 +263,14 @@ const CallProvider = ({ children }: any) => {
         console.log("it's vibrating");
       }
     });
-  }, []);
 
-  useEffect(() => {
     socket.on("leaveCall", (data) => {
       console.log("leave call data", data);
 
       leaveCallRingsHandler();
 
       if (data.to === "john doe") {
-        openCallRoom(false);
+        closeCallRoom();
 
         if (cameraStream.current) {
           cameraStream.current
@@ -258,7 +286,8 @@ const CallProvider = ({ children }: any) => {
   return (
     <CallContext.Provider
       value={{
-        videoContainerRef,
+        streamedVideoContainerRef,
+        transimittedVideoContainerRef,
         blobRecorded,
         cameraStream,
         mediaRecorder,

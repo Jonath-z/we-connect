@@ -1,8 +1,9 @@
 import { gunServices } from "lib/services/gunService";
+import { TMessage } from "lib/types";
 import React, { useEffect, useState } from "react";
 
 const useGunMessages = () => {
-  const [messages, setMessages] = useState<any[]>([]);
+  const [messages, setMessages] = useState<TMessage[]>([]);
 
   useEffect(() => {
     gunServices.messageListener?.map((message) => {

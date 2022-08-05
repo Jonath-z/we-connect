@@ -27,5 +27,8 @@ export const minifyCallRoomAtom = atom({
 
 export const openCallRoomAtom = atom({
   key: "openCallRoomAtom",
-  default: false,
+  default: {
+    roomType: "video" || "audio",
+    isOpened: false,
+  },
 });

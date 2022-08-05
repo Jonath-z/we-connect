@@ -5,10 +5,10 @@ import { user } from "components/assets/dummy_data/user";
 import { VDot, VPhone } from "../_modules/vectors";
 
 interface IProps {
-  onShowChat: () => void;
+  onOpenChat: () => void;
 }
 
-const Calls = ({ onShowChat }: IProps) => {
+const Calls = ({ onOpenChat }: IProps) => {
   const { calls } = user;
   return (
     <div className="w-full h-full relative flex flex-col">

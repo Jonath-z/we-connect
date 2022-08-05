@@ -1,7 +1,13 @@
 /* eslint-disable @next/next/no-img-element */
 /* eslint-disable jsx-a11y/alt-text */
+import { TMessage } from "lib/types";
 import React from "react";
-import { VCheck, VDoubleCheck } from "../../vectors";
+import {
+  VCheck,
+  VDoubleCheck,
+  VImageCard,
+  VMessagevideoCamera,
+} from "../../vectors";
 
 type Contact = {
   id: string;
@@ -10,22 +16,9 @@ type Contact = {
   userCoverUrl?: string;
 };
 
-type LastMessage = {
-  senderUsername: string;
-  senderId: string;
-  receiverUsername: string;
-  receiverId: string;
-  message: string;
-  date: string;
-  time: string;
-  status: {
-    viewed: boolean;
-  };
-};
-
 interface IProps {
   contact: Contact;
-  lastMessage?: LastMessage;
+  lastMessage?: TMessage;
   showMessageCheck?: boolean;
 }
 
@@ -42,14 +35,28 @@ const ContactCard = ({ contact, lastMessage, showMessageCheck }: IProps) => {
       <div className="flex justify-between w-full px-2">
         <div>
           <p className="font-bold text-dark text-sm">{username}</p>
-          <p className="text-xs pt-1 text-gray-500">{lastMessage?.message}</p>
+          <p className="text-xs pt-1 text-gray-500">
+            {lastMessage?.isVideo ? (
+              <span className="flex items-center gap-1">
+                <VMessagevideoCamera />
+                video
+              </span>
+            ) : lastMessage?.isImage ? (
+              <span className="flex items-center gap-1">
+                <VImageCard />
+                picture
+              </span>
+            ) : (
+              lastMessage?.message
+            )}
+          </p>
         </div>
-        {showMessageCheck &&
+        {/* {showMessageCheck &&
           (lastMessage?.status.viewed ? (
             <VDoubleCheck className="text-green-500" />
           ) : (
             <VCheck />
-          ))}
+          ))} */}
       </div>
     </div>
   );

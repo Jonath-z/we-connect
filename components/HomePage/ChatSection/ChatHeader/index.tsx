@@ -8,10 +8,8 @@ import {
   VVideo,
 } from "components/modules/_modules/vectors";
 import { onlineMarker } from "components/static";
-import { openCallRoomAtom } from "lib/atoms";
 import { useCallContext } from "lib/contexts/CallContext";
-import React, { Dispatch, SetStateAction } from "react";
-import { useSetRecoilState } from "recoil";
+import React from "react";
 
 interface IProps {
   userAvatarUrl: string;
@@ -21,7 +19,6 @@ interface IProps {
   isChatMenuVisible: boolean;
   onRedirectToChat: () => void;
   onToggleChatMenu: () => void;
-  // setIsinComingCall: Dispatch<SetStateAction<boolean>>;
 }
 
 const ChatHeader = ({
@@ -32,15 +29,7 @@ const ChatHeader = ({
   isChatMenuVisible,
   onRedirectToChat,
   onToggleChatMenu,
-}: // setIsinComingCall,
-IProps) => {
-  // const openCallRoom = useSetRecoilState(openCallRoomAtom);
-
-  // const requestCall = () => {
-  //   openCallRoom(true);
-  //   setIsinComingCall(false);
-  // };
-
+}: IProps) => {
   const { requestCall } = useCallContext();
 
   return (
@@ -77,11 +66,16 @@ IProps) => {
             <li className="mx-2 cursor-pointer">
               <VSearch />
             </li>
-            <li className="mx-2 cursor-pointer">
+            <li
+              onClick={() => requestCall("audio")}
+              role="button"
+              onKeyDown={() => null}
+              className="mx-2 cursor-pointer"
+            >
               <VPhone />
             </li>
             <li
-              onClick={requestCall}
+              onClick={() => requestCall("video")}
               role="button"
               onKeyDown={() => null}
               className="mx-2 cursor-pointer"
