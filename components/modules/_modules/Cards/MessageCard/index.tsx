@@ -28,7 +28,7 @@ const MessageCard = ({ messages }: IProps) => {
       className={`my-2 py-2 px-2 w-fit max-w-xl mobile:max-w-[90%] transition-all break-words flex flex-col ${
         id === senderId
           ? "bg-white rounded-t-xl rounded-br-xl"
-          : "bg-dark text-light ml-auto  rounded-t-xl rounded-bl-xl"
+          : "from-blue-500 via-sky-600 to-blue-700 bg-gradient-to-tr text-light ml-auto  rounded-t-xl rounded-bl-xl"
       }`}
     >
       {!isVideo && !isImage && (

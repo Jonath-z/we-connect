@@ -14,7 +14,7 @@ const Stories = ({ isSeeAll, toggleStoryView }: IProps) => {
   const { stories, username } = user;
 
   return (
-    <div className="bg-dark">
+    <div>
       <div className={`w-full overflow-x-auto flex ${!isSeeAll && "h-28"}`}>
         {stories.map((story, index) => {
           return (

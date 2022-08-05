@@ -15,7 +15,9 @@ const HomePage = () => {
 
   return (
     <>
-      <div className={`h-screen flex bg-dark md:bg-light overflow-x-hidden`}>
+      <div
+        className={`h-screen flex bg-gradient-to-tr from-blue-400 via-sky-500 to-blue-600 md:bg-light overflow-x-hidden`}
+      >
         <div
           className={`w-2/5 h-full overflow-y-auto mobilemd:w-full ${
             isChatShowed && "-translate-x-full w-full mobile:transition-all"
@@ -24,8 +26,9 @@ const HomePage = () => {
           <ContactSection />
         </div>
         <div
-          className={`w-3/5 mx-5 mobile:mx-0 overflow-y-auto mobile:w-full ${
-            isChatShowed && "transition-all mobile:fixed mobile:h-full"
+          className={`${
+            isChatShowed &&
+            "transition-all mobile:fixed mobile:h-full w-3/5 mx-5 mobile:mx-0 overflow-y-auto mobile:w-full"
           }`}
         >
           {isChatShowed ? (

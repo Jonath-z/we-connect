@@ -36,42 +36,48 @@ const BottomNav = () => {
   };
 
   return (
-    <div className="fixed w-full m-auto bottom-5 justify-center items-center hidden mobile:flex ">
-      <ul className="flex justify-around border border-light border-opacity-40 bg-dark text-light items-center py-2 px-3 w-3/4 rounded-3xl shadow-lg">
+    <div className="fixed w-full m-auto bottom-0 justify-center items-center hidden mobile:flex ">
+      <ul className="flex justify-around border border-light border-opacity-40 bg-gradient-to-tr from-blue-400 via-sky-500 to-blue-600 backdrop-blur-lg text-light items-center py-3 w-full shadow-lg">
         <li
           onClick={() => onSelectOption("chat")}
-          className={`flex transition-all ${
+          className={`flex ${
             selectedOption.chat
-              ? "bg-light text-dark px-3 py-1 rounded-xl"
-              : "flex-col"
+              ? "bg-light text-dark p-3 rounded-full -mt-14 shadow-xl border text-3xl transition-all"
+              : "flex-col border-none -mt-0"
           } justify-center items-center`}
         >
           <span>
             <VChat />
           </span>
-          <span className="text-xs py-1 px-1">Chat</span>
+          {!selectedOption.chat && (
+            <span className={`text-xs py-1 px-1 font-bold`}>Chat</span>
+          )}
         </li>
         <li
           onClick={() => onSelectOption("contact")}
-          className={`flex transition-all justify-center items-center  ${
+          className={`flex justify-center items-center  ${
             selectedOption.contact
-              ? "bg-light text-dark px-3 py-1 rounded-xl"
+              ? "bg-light text-dark p-3 rounded-full -mt-14 shadow-xl border text-3xl transition-all"
               : "flex-col"
           }`}
         >
           <VContactBook />
-          <span className="text-xs py-1 px-1">Contacts</span>
+          {!selectedOption.contact && (
+            <span className="text-xs py-1 px-1 font-bold">Contacts</span>
+          )}
         </li>
         <li
           onClick={() => onSelectOption("calls")}
-          className={`flex justify-center items-center transition-all ${
+          className={`flex justify-center items-center ${
             selectedOption.calls
-              ? "bg-light text-dark px-3 py-1 rounded-xl"
+              ? "bg-light text-dark p-3 rounded-full -mt-14 shadow-xl border text-3xl transition-all"
               : "flex-col"
           }`}
         >
           <VPhone />
-          <span className="text-xs py-1 px-1">Calls</span>
+          {!selectedOption.calls && (
+            <span className="text-xs py-1 px-1 font-bold">Calls</span>
+          )}
         </li>
       </ul>
     </div>

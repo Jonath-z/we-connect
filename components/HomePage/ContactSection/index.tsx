@@ -38,13 +38,11 @@ const ContactSection = () => {
   };
 
   return (
-    <div className="w-full h-full relative flex flex-col">
-      <div className="bg-light z-10 py-5 px-2 fixed w-2/5 mobile:w-full mobilemd:bg-dark text-light">
+    <div className="w-full h-full relative flex flex-col bg-gradient-to-tr from-blue-400 via-sky-500 to-blue-600">
+      <div className="z-10 py-5 px-2 fixed w-2/5 mobile:w-full text-light">
         <Header />
       </div>
-      <div
-        className={`fixed w-full flex flex-col max-h-full overflow-y-auto my-16`}
-      >
+      <div className="fixed w-full flex flex-col max-h-full overflow-y-auto my-16">
         <div className="flex justify-between pt-2 items-center md:hidden px-2 text-light">
           <h2 className="text-3xl font-bold">{contentTitle()}</h2>
           <button
