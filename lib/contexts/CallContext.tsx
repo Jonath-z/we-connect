@@ -14,7 +14,7 @@ import { useSetRecoilState } from "recoil";
 import Peer from "simple-peer";
 import { io } from "socket.io-client";
 
-const socket = io("http://localhost:3300");
+export const socket = io("http://localhost:3300");
 
 interface ICallContext {
   cameraStream: any | null;

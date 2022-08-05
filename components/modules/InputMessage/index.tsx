@@ -10,6 +10,8 @@ import { useRecoilState } from "recoil";
 import { messagesAtom } from "lib/atoms";
 import { gunServices } from "lib/services/gunService";
 import VideoMessageRecorder from "../VideoMessageRecoder";
+import dateServices from "lib/services/dateService";
+import { socket } from "lib/contexts/CallContext";
 
 const InputMessage = () => {
   const [messageValue, setMessageValue] = useState("");
@@ -19,9 +21,13 @@ const InputMessage = () => {
 
   const { inputRef, setInputValue } = useInputAutoResize();
 
-  useEffect(() => {
-    console.log("this messages", messages);
-  }, [messages]);
+  const sendTypingMessageSignal = (isTyping: boolean) => {
+    socket.emit("typingMessageSignal", {
+      from: "John Doe",
+      to: "John Doe",
+      isTyping,
+    });
+  };
 
   const onSendMessage = () => {
     const message = {
@@ -31,8 +37,8 @@ const InputMessage = () => {
       receiverId: "zizou_id",
       isVideo: false,
       message: messageValue,
-      date: Date.now().toLocaleString(),
-      time: Date.now().toLocaleString(),
+      date: dateServices.getFullDate(),
+      time: dateServices.getTime(),
     };
 
     gunServices.sendMessage(message);
@@ -72,6 +78,12 @@ const InputMessage = () => {
     const { value } = target;
     setMessageValue(value);
     setInputValue(value);
+
+    sendTypingMessageSignal(true);
+
+    setTimeout(() => {
+      sendTypingMessageSignal(false);
+    }, 2000);
   };
 
   return (

@@ -32,7 +32,7 @@ const MessageCard = ({ messages }: IProps) => {
       }`}
     >
       {!isVideo && !isImage && (
-        <p className={`text-xs ${id === senderId ? "mr-auto" : "ml-auto"}`}>
+        <p className={`text-sm ${id === senderId ? "mr-auto" : "ml-auto"}`}>
           {message}
         </p>
       )}
