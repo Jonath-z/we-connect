@@ -26,11 +26,19 @@ class GunService {
     this.usersListener?.set(user);
   }
 
-  public findUserById(userId: string, callback: (user: TUser) => void) {
+  public findUserById(userId: string, callback: (user: TUser | null) => void) {
     this.usersListener.map((user: TUser) => {
       if (user.id === userId) {
         callback(user);
+      } else {
+        callback(null);
       }
+    });
+  }
+
+  public findUsers() {
+    this.usersListener.map((user) => {
+      console.log("user authenticated", user);
     });
   }
 }

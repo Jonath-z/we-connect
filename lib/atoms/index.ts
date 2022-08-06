@@ -1,4 +1,5 @@
 import { atom } from "recoil";
+import { TUser } from "../types";
 
 export const showChatAtom = atom({
   key: "showChatAtom",
@@ -31,4 +32,9 @@ export const openCallRoomAtom = atom({
     roomType: "video" || "audio",
     isOpened: false,
   },
+});
+
+export const userAccountAtom = atom<TUser | null>({
+  key: "userAccountAtom",
+  default: null,
 });

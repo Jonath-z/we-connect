@@ -117,7 +117,7 @@ const MouveOnScreenProvider = ({ children }: any) => {
       setIsMoving(false);
       if (movingPatternRef.current) {
         if (patternOutsideview) {
-          openCallRoom(false);
+          openCallRoom({ roomType: "audio" || "video", isOpened: false });
           setCallRoomMinified(false);
           movingPatternRef.current.style.right = "2px";
           movingPatternRef.current.style.top = "30px";

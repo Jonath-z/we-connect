@@ -1,20 +1,25 @@
 import { TUser } from "lib/types";
 import { gunServices } from "./gunService";
+import localStorageServices from "./localStorage";
 
 class Auth {
   onGoogleLoginSuccess(response: any) {
     console.log("login success", response);
-    const user: TUser = {
+    const newUser: TUser = {
       id: response.profileObj.googleId,
       username: response.profileObj.givenName,
       userAvatarUrl: response.profileObj.imageUrl,
     };
-    gunServices.findUserById(user.id, (user: TUser) => {
+
+    gunServices.findUserById(newUser.id, (user: TUser | null) => {
       if (user) {
         window.location.href = `/home/${user.id}`;
+      } else {
+        gunServices.saveNewUser(newUser);
+        window.location.href = `/home/${newUser.id}`;
+
+        localStorageServices.setItem("_we_connect_account_id", newUser.id);
       }
-      gunServices.saveNewUser(user);
-      window.location.href = `/home/${user.id}`;
     });
   }
 
