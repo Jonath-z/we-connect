@@ -64,8 +64,8 @@ const InputMessage = () => {
           isVideo: false,
           isImage: true,
           message: base64ImageString,
-          date: Date.now().toLocaleString(),
-          time: Date.now().toLocaleString(),
+          date: dateServices.getFullDate(),
+          time: dateServices.getTime(),
         };
         gunServices.sendMessage(message);
       };

@@ -3,7 +3,6 @@ import ShowWidget from "components/modules/_modules/ShowWidget";
 import { openCallRoomAtom, showChatAtom, userAccountAtom } from "lib/atoms";
 import { useCallContext } from "lib/contexts/CallContext";
 import { gunServices } from "lib/services/gunService";
-import localStorageServices from "lib/services/localStorage";
 import React, { FC, useEffect, useState } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 import ChatSection from "./ChatSection";
