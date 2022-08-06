@@ -1,6 +1,5 @@
 import React from "react";
 import { VArrowLeft, WeConnectVector } from "../_modules/vectors";
-import loginBg from "../../assets/loginBg.jpg";
 import { useState } from "react";
 import { useEffect } from "react";
 import { GoogleLogin } from "react-google-login";
@@ -8,9 +7,10 @@ import auth from "lib/services/auth";
 
 interface IProps {
   onClickBack: () => void;
+  showLogin: boolean;
 }
 
-const Login = ({ onClickBack }: IProps) => {
+const Login = ({ onClickBack, showLogin }: IProps) => {
   const [isMobile, setIsMobile] = useState(true);
 
   useEffect(() => {
@@ -23,7 +23,13 @@ const Login = ({ onClickBack }: IProps) => {
   }, []);
 
   return (
-    <div className="w-full h-full flex mobile:flex-col justify-center items-center">
+    <div
+      className={`w-full h-full absolute top-0 left-0 bottom-0 right-0 flex mobile:flex-col justify-center items-center ${
+        showLogin
+          ? "translate-x-100 transition-all"
+          : "-translate-x-[2000px] transition-all"
+      }`}
+    >
       <div
         tabIndex={0}
         role="button"
@@ -37,16 +43,8 @@ const Login = ({ onClickBack }: IProps) => {
         <WeConnectVector className="w-96 h-44 object-cover" />
         <h1 className="text-light text-4xl">We connect</h1>
       </div>
-      <div
-        style={{
-          backgroundImage: `url(${!isMobile && loginBg.src})`,
-          backgroundPosition: "center",
-          backgroundSize: "cover",
-          backgroundRepeat: "no-repeat",
-        }}
-        className="flex flex-col justify-center items-center px-10 mobilemd:px-5 mobilesm:p-0 mobilesm:w-full w-full h-full mobile:h-fit mobile:w-fit mobile:bg-dark"
-      >
-        <div className="bg-primary flex flex-col justify-center items-center mobilesm:items-stretch bg-opacity-30 backdrop-blur-md p-20 mobilemd:p-5 mobilesm:w-full mobile:my-10 mobilemd:bg-dark rounded-lg shadow-lg border border-light border-opacity-30 transition-all">
+      <div className="flex flex-col justify-center items-center px-10 mobilemd:px-5 mobilesm:p-0 mobilesm:w-full w-full h-full mobile:h-fit mobile:w-fit">
+        <div className="bg-primary flex flex-col justify-center items-center mobilesm:items-stretch bg-opacity-30 backdrop-blur-md p-20 mobilemd:p-5 mobilesm:w-full mobile:my-10 rounded-lg shadow-md border border-light border-opacity-30 transition-all">
           <div>
             <h2 className="text-light text-5xl py-5">Join with</h2>
             <GoogleLogin
@@ -56,11 +54,12 @@ const Login = ({ onClickBack }: IProps) => {
               onFailure={auth.onGoogleLoginFailure}
               cookiePolicy={"single_host_origin"}
               // isSignedIn={true}
-              className="text-light font-bold w-96 mobilesm:w-full py-3 my-2 rounded-md flex justify-center items-center"
+              className="text-light font-bold w-96 mobilesm:w-full py-3 my-2 rounded-xl flex justify-center items-center"
             />
           </div>
         </div>
       </div>
+      <div className="landing-vector-bg absolute bottom-0 h-32 w-full" />
     </div>
   );
 };

@@ -10,9 +10,9 @@ const AuthPage = () => {
   };
 
   return (
-    <div className="h-screen bg-dark w-full flex flex-col">
-      {!isLogin && <GetStarted onClick={onToggleLogin} />}
-      {isLogin && <Login onClickBack={onToggleLogin} />}
+    <div className="h-screen from-blue-500 via-sky-600 to-blue-700 bg-gradient-to-tr w-full flex">
+      <GetStarted showGetStarted={!isLogin} onClick={onToggleLogin} />
+      <Login showLogin={isLogin} onClickBack={onToggleLogin} />
     </div>
   );
 };
