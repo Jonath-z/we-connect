@@ -1,26 +1,31 @@
-import { TUser } from "lib/types";
-import { gunServices } from "./gunService";
+import { ICreateUser } from "lib/models";
+import apiServices from "./apiServices";
 import localStorageServices from "./localStorage";
+import * as rand from "random-key";
 
 class Auth {
   onGoogleLoginSuccess(response: any) {
     console.log("login success", response);
-    const newUser: TUser = {
-      id: response.profileObj.googleId,
+
+    const user: ICreateUser = {
       username: response.profileObj.givenName,
-      userAvatarUrl: response.profileObj.imageUrl,
+      userProfileUrl: response.profileObj.imageUrl,
+      userToken: rand.generate(),
     };
 
-    gunServices.findUserById(newUser.id, (user: TUser | null) => {
-      if (user) {
-        window.location.href = `/home/${user.id}`;
-      } else {
-        gunServices.saveNewUser(newUser);
-        window.location.href = `/home/${newUser.id}`;
+    (async () => {
+      const { response, error } = await apiServices.createUser(user);
 
-        localStorageServices.setItem("_we_connect_account_id", newUser.id);
+      if (error) {
+        console.log("getting error", error);
+      } else {
+        window.location.href = `/home/${response?.data.user.userToken}`;
+        localStorageServices.setItem(
+          "_we_connect_account_id",
+          response?.data.user.userToken
+        );
       }
-    });
+    })();
   }
 
   onGoogleLoginFailure(response: any) {

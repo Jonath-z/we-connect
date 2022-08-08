@@ -1,13 +1,6 @@
 import useInputAutoResize from "lib/hooks/useInputAutoResize";
 import React, { ChangeEventHandler, useEffect, useRef, useState } from "react";
-import {
-  VAttachement,
-  VCamera,
-  VMessagevideoCamera,
-  VSend,
-} from "../_modules/vectors";
-import { useRecoilState } from "recoil";
-import { messagesAtom } from "lib/atoms";
+import { VAttachement, VMessagevideoCamera, VSend } from "../_modules/vectors";
 import { gunServices } from "lib/services/gunService";
 import VideoMessageRecorder from "../VideoMessageRecoder";
 import dateServices from "lib/services/dateService";
@@ -15,7 +8,6 @@ import { socket } from "lib/contexts/CallContext";
 
 const InputMessage = () => {
   const [messageValue, setMessageValue] = useState("");
-  const [messages, setMessages] = useRecoilState(messagesAtom);
   const [isOpenVidepRecorder, setIsOpenVideoRecorder] = useState(false);
   const inputFileRef = useRef<HTMLInputElement>(null);
 

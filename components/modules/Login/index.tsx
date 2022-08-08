@@ -53,7 +53,7 @@ const Login = ({ onClickBack, showLogin }: IProps) => {
               onSuccess={auth.onGoogleLoginSuccess}
               onFailure={auth.onGoogleLoginFailure}
               cookiePolicy={"single_host_origin"}
-              isSignedIn={true}
+              // isSignedIn={true}
               className="text-light font-bold w-96 mobilesm:w-full py-3 my-2 rounded-xl flex justify-center items-center"
             />
           </div>

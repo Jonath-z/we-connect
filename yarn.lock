@@ -1719,6 +1719,11 @@
   "resolved" "https://registry.npmjs.org/ramda/-/ramda-0.26.1.tgz"
   "version" "0.26.1"
 
+"random-key@^0.3.2":
+  "integrity" "sha512-ou1tm7EftBXVX/UI6Hb9ffsC3aAdpsyq14Ht6PGm/NGzFMtuFQUmiDLAwcAM2Ev3ggI4u9kRZ7caXLe68aLaeQ=="
+  "resolved" "https://registry.npmjs.org/random-key/-/random-key-0.3.2.tgz"
+  "version" "0.3.2"
+
 "randombytes@^2.1.0":
   "integrity" "sha512-vYl3iOX+4CKUWuxGi9Ukhie6fsqXqS9FE2Zaic4tNFD2N2QQaXOMFbuKK4QmDHC0JO6B1Zp41J0LpT0oR68amQ=="
   "resolved" "https://registry.npmjs.org/randombytes/-/randombytes-2.1.0.tgz"

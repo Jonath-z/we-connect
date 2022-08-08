@@ -1,4 +1,4 @@
-import { openCallRoomAtom } from "lib/atoms";
+import { openCallRoomAtom, userAccountAtom } from "lib/atoms";
 import React, {
   createContext,
   Dispatch,
@@ -10,7 +10,7 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 
 import Peer from "simple-peer";
 import { io } from "socket.io-client";
@@ -90,6 +90,7 @@ const CallProvider = ({ children }: any) => {
   });
 
   const [callRoomOpened, openCallRoom] = useRecoilState(openCallRoomAtom);
+  const userAccount = useRecoilValue(userAccountAtom);
 
   const getMediaSteam = async (callType: string) => {
     cameraStream.current = await navigator.mediaDevices.getUserMedia(
@@ -244,6 +245,18 @@ const CallProvider = ({ children }: any) => {
 
     connectionRef.current?.destroy();
   };
+
+  useEffect(() => {
+    socket.on("connect", () => {
+      if (userAccount) {
+        socket.emit("newConnection", {
+          username: userAccount.username,
+          userToken: userAccount.userToken,
+          userSocketId: socket.id,
+        });
+      }
+    });
+  }, [userAccount]);
 
   useEffect(() => {
     socket.on("incomingCall", (data) => {

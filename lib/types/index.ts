@@ -47,6 +47,8 @@ export type TUser = {
   username: string;
   userAvatarUrl?: string;
   userCoverUrl?: string;
+  userToken?: string;
+  userSocketId?: string;
   password?: string;
   online?: boolean;
   lastConnexion?: string;
