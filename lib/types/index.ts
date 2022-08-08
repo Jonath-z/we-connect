@@ -1,8 +1,8 @@
 export type TMessage = {
-  id: string;
-  senderUsername: string;
+  id?: number;
+  sender?: string;
   senderId: string;
-  receiverUsername: string;
+  receiver: string;
   receiverId: string;
   message: string;
   date: string;

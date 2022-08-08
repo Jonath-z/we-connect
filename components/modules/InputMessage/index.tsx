@@ -5,35 +5,46 @@ import { gunServices } from "lib/services/gunService";
 import VideoMessageRecorder from "../VideoMessageRecoder";
 import dateServices from "lib/services/dateService";
 import { socket } from "lib/contexts/CallContext";
+import { useRecoilValue } from "recoil";
+import { userAccountAtom } from "lib/atoms";
+import { useMessage } from "lib/contexts/MessageContext";
+import { TMessage } from "lib/types";
+import { orderObject } from "lib/helper";
 
 const InputMessage = () => {
   const [messageValue, setMessageValue] = useState("");
   const [isOpenVidepRecorder, setIsOpenVideoRecorder] = useState(false);
   const inputFileRef = useRef<HTMLInputElement>(null);
+  const userAccount = useRecoilValue(userAccountAtom);
+
+  const { sendMessage } = useMessage();
 
   const { inputRef, setInputValue } = useInputAutoResize();
 
   const sendTypingMessageSignal = (isTyping: boolean) => {
     socket.emit("typingMessageSignal", {
-      from: "John Doe",
+      from: userAccount?.username,
       to: "John Doe",
       isTyping,
     });
   };
 
   const onSendMessage = () => {
-    const message = {
-      senderUsername: "John Doe",
-      senderId: "Doe---id",
-      receiverUsername: "John Doe",
+    const message: TMessage = {
+      sender: userAccount?.username!,
+      senderId: userAccount?.id!,
+      receiver: "John Doe",
       receiverId: "zizou_id",
       isVideo: false,
+      isImage: false,
       message: messageValue,
       date: dateServices.getFullDate(),
       time: dateServices.getTime(),
     };
 
-    gunServices.sendMessage(message);
+    sendMessage(orderObject(message));
+
+    // gunServices.sendMessage(message);
     setMessageValue("");
   };
 
@@ -48,18 +59,18 @@ const InputMessage = () => {
       reader.readAsDataURL(files[0]);
       reader.onloadend = () => {
         const base64ImageString = reader.result;
-        const message = {
-          senderUsername: "John Doe",
-          senderId: "Doe---id",
-          receiverUsername: "John Doe",
+        const message: TMessage = {
+          sender: userAccount?.username!,
+          senderId: userAccount?.id!,
+          receiver: "John Doe",
           receiverId: "zizou_id",
           isVideo: false,
           isImage: true,
-          message: base64ImageString,
+          message: base64ImageString as string,
           date: dateServices.getFullDate(),
           time: dateServices.getTime(),
         };
-        gunServices.sendMessage(message);
+        sendMessage(orderObject(message));
       };
     }
   };

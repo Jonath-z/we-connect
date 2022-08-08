@@ -1,5 +1,8 @@
-import { useCallContext } from "lib/contexts/CallContext";
-import { gunServices } from "lib/services/gunService";
+import { userAccountAtom } from "lib/atoms";
+import { useMessage } from "lib/contexts/MessageContext";
+import { orderObject } from "lib/helper";
+import dateServices from "lib/services/dateService";
+import { TMessage } from "lib/types";
 import React, {
   Dispatch,
   SetStateAction,
@@ -7,6 +10,7 @@ import React, {
   useRef,
   useState,
 } from "react";
+import { useRecoilValue } from "recoil";
 import { VPlus, VSend } from "../_modules/vectors";
 
 interface IProps {
@@ -25,6 +29,10 @@ const VideoMessageRecoder = ({
   const videoContainerRef = useRef<HTMLVideoElement>(null);
   const mediaRecorder = useRef<any>(null);
   const blobRecorded = useRef<any>([]);
+
+  const userAccount = useRecoilValue(userAccountAtom);
+
+  const { sendMessage } = useMessage();
 
   useEffect(() => {
     (async () => {
@@ -64,18 +72,19 @@ const VideoMessageRecoder = ({
         reader.onloadend = () => {
           const base64VideoString = reader.result;
 
-          const message = {
-            senderUsername: "John Doe",
-            senderId: "Doe---id",
-            receiverUsername: "John Doe",
+          const message: TMessage = {
+            sender: userAccount?.username!,
+            senderId: userAccount?.id!,
+            receiver: "John Doe",
             receiverId: "zizou_id",
             isVideo: true,
-            message: base64VideoString,
-            date: Date.now().toLocaleString(),
-            time: Date.now().toLocaleString(),
+            isImage: false,
+            message: base64VideoString as string,
+            date: dateServices.getFullDate(),
+            time: dateServices.getTime(),
           };
 
-          gunServices.sendMessage(message);
+          sendMessage(orderObject(message));
 
           setVideoBased64Strig(base64VideoString as string);
         };

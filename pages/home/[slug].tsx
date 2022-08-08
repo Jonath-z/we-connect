@@ -6,6 +6,7 @@ import CallProvider from "lib/contexts/CallContext";
 import { TUser } from "lib/types";
 import apiServices from "lib/services/apiServices";
 import ShowWidget from "components/modules/_modules/ShowWidget";
+import MessageProvider from "lib/contexts/MessageContext";
 
 const Home: NextPage<{ user: TUser }> = ({ user }) => {
   const redirectToAuthPage = () => {
@@ -19,7 +20,9 @@ const Home: NextPage<{ user: TUser }> = ({ user }) => {
       <ShowWidget condition={user !== null && user !== undefined}>
         <MouveOnScreenProvider>
           <CallProvider>
-            <HomePage user={user} />
+            <MessageProvider>
+              <HomePage user={user} />
+            </MessageProvider>
           </CallProvider>
         </MouveOnScreenProvider>
       </ShowWidget>
