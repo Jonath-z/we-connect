@@ -1,40 +1,35 @@
 import useInputAutoResize from "lib/hooks/useInputAutoResize";
 import React, { ChangeEventHandler, useEffect, useRef, useState } from "react";
 import { VAttachement, VMessagevideoCamera, VSend } from "../_modules/vectors";
-import { gunServices } from "lib/services/gunService";
 import VideoMessageRecorder from "../VideoMessageRecoder";
 import dateServices from "lib/services/dateService";
 import { socket } from "lib/contexts/CallContext";
 import { useRecoilValue } from "recoil";
 import { userAccountAtom } from "lib/atoms";
 import { useMessage } from "lib/contexts/MessageContext";
-import { TMessage } from "lib/types";
+import { TMessage, TUser } from "lib/types";
 import { orderObject } from "lib/helper";
 
-const InputMessage = () => {
+interface IProps {
+  contact: TUser;
+}
+
+const InputMessage = ({ contact }: IProps) => {
   const [messageValue, setMessageValue] = useState("");
   const [isOpenVidepRecorder, setIsOpenVideoRecorder] = useState(false);
   const inputFileRef = useRef<HTMLInputElement>(null);
   const userAccount = useRecoilValue(userAccountAtom);
 
-  const { sendMessage } = useMessage();
+  const { sendMessage, sendTypingMessageSignal } = useMessage();
 
   const { inputRef, setInputValue } = useInputAutoResize();
-
-  const sendTypingMessageSignal = (isTyping: boolean) => {
-    socket.emit("typingMessageSignal", {
-      from: userAccount?.username,
-      to: "John Doe",
-      isTyping,
-    });
-  };
 
   const onSendMessage = () => {
     const message: TMessage = {
       sender: userAccount?.username!,
       senderId: userAccount?.id!,
-      receiver: "John Doe",
-      receiverId: "zizou_id",
+      receiver: contact.username,
+      receiverId: contact.id,
       isVideo: false,
       isImage: false,
       message: messageValue,
@@ -44,7 +39,6 @@ const InputMessage = () => {
 
     sendMessage(orderObject(message));
 
-    // gunServices.sendMessage(message);
     setMessageValue("");
   };
 
@@ -62,8 +56,8 @@ const InputMessage = () => {
         const message: TMessage = {
           sender: userAccount?.username!,
           senderId: userAccount?.id!,
-          receiver: "John Doe",
-          receiverId: "zizou_id",
+          receiver: contact.username,
+          receiverId: contact.id,
           isVideo: false,
           isImage: true,
           message: base64ImageString as string,
@@ -82,10 +76,18 @@ const InputMessage = () => {
     setMessageValue(value);
     setInputValue(value);
 
-    sendTypingMessageSignal(true);
+    sendTypingMessageSignal({
+      from: userAccount?.username!,
+      to: contact.username,
+      isTyping: true,
+    });
 
     setTimeout(() => {
-      sendTypingMessageSignal(false);
+      sendTypingMessageSignal({
+        from: userAccount?.username!,
+        to: contact.username,
+        isTyping: false,
+      });
     }, 2000);
   };
 

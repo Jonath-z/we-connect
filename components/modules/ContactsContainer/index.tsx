@@ -1,18 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import ContactCard from "components/modules/_modules/Cards/ContactCard";
-import { user } from "components/assets/dummy_data/user";
-import useGunMessages from "lib/hooks/useGunMessages";
-import { TMessage } from "../../../lib/types";
+import { TMessage, TUser } from "../../../lib/types";
+import { openedChatAtom } from "lib/atoms";
+import { useSetRecoilState } from "recoil";
 
 interface IProps {
   isSeeAll: boolean;
-  onOpenChat: () => void;
+  contacts: TUser[];
 }
 
-const ContactsContainer = ({ isSeeAll, onOpenChat }: IProps) => {
-  const { contacts } = user;
-
-  const messages = useGunMessages();
+const ContactsContainer = ({ isSeeAll, contacts }: IProps) => {
+  const setOpenedChat = useSetRecoilState(openedChatAtom);
 
   return (
     <div
@@ -22,17 +20,19 @@ const ContactsContainer = ({ isSeeAll, onOpenChat }: IProps) => {
           : "translate-y-0 transition-all"
       }`}
     >
-      {messages &&
+      {contacts &&
         contacts.map((contact, index) => {
           return (
-            <div key={index} className="py-1" onClick={onOpenChat}>
+            <div
+              key={index}
+              className="py-1"
+              onClick={() => {
+                setOpenedChat({ contact, isOpened: true });
+              }}
+            >
               <ContactCard
                 contact={contact}
-                lastMessage={
-                  messages.filter(
-                    (message: TMessage) => message.senderUsername === "John Doe"
-                  )[messages.length - 1]
-                }
+                // lastMessage={"last message"}
                 showMessageCheck={true}
               />
             </div>

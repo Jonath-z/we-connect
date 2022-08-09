@@ -7,44 +7,28 @@ import InputMessage from "components/modules/InputMessage";
 import ChatMenu from "./ChatMenu";
 import useGunMessages from "lib/hooks/useGunMessages";
 import { socket } from "lib/contexts/CallContext";
+import { useRecoilValue } from "recoil";
+import { openedChatAtom } from "lib/atoms";
+import { TUser } from "lib/types";
 
 interface IProps {
   onRedirectToChat: () => void;
 }
 
 const ChatSection = ({ onRedirectToChat }: IProps) => {
-  const { userAvatarUrl, username, lastConnexion, online } = user;
   const [isChatMenuVisible, setIsChatMenuVisible] = useState(false);
-  const [typingMessageSignal, setTypingMessageSignal] = useState({
-    from: "",
-    to: "",
-    isTyping: false,
-  });
+  const openedChat = useRecoilValue(openedChatAtom);
 
   const onToggleChatMenu = () => {
     setIsChatMenuVisible(!isChatMenuVisible);
   };
-
-  useEffect(() => {
-    socket.on("getTypingMessageSignal", (data) => {
-      if (data.from === "John Doe" && data.to === "John Doe")
-        setTypingMessageSignal({
-          from: data.from,
-          to: data.to,
-          isTyping: data.isTyping,
-        });
-    });
-  });
 
   const messages = useGunMessages();
 
   return (
     <div className="flex flex-col">
       <ChatHeader
-        userAvatarUrl={userAvatarUrl}
-        username={username}
-        lastConnexion={lastConnexion}
-        online={online}
+        contact={openedChat.contact as TUser}
         onRedirectToChat={onRedirectToChat}
         onToggleChatMenu={onToggleChatMenu}
         isChatMenuVisible={isChatMenuVisible}
@@ -57,18 +41,12 @@ const ChatSection = ({ onRedirectToChat }: IProps) => {
             </div>
           );
         })}
-
-        {typingMessageSignal.isTyping && (
-          <p className="bg-gray-300 w-fit px-2 py-2 rounded-t-xl rounded-br-xl text-xs">
-            typing ...
-          </p>
-        )}
       </div>
       <ChatMenu
         isChatMenuVisible={isChatMenuVisible}
         setIsChatMenuVisible={setIsChatMenuVisible}
       />
-      <InputMessage />
+      <InputMessage contact={openedChat.contact!} />
     </div>
   );
 };

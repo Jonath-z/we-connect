@@ -1,9 +1,15 @@
 import { atom } from "recoil";
 import { TUser } from "../types";
 
-export const showChatAtom = atom({
-  key: "showChatAtom",
-  default: false,
+export const openedChatAtom = atom<{
+  contact: TUser | null;
+  isOpened: boolean;
+}>({
+  key: "openedChatAtom",
+  default: {
+    contact: null,
+    isOpened: false,
+  },
 });
 
 export const bottomNavAtom = atom({

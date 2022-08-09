@@ -1,9 +1,9 @@
 export type TMessage = {
   id?: number;
   sender?: string;
-  senderId: string;
+  senderId: number;
   receiver: string;
-  receiverId: string;
+  receiverId: number;
   message: string;
   date: string;
   time: string;
@@ -31,27 +31,23 @@ export type TCall = {
   isVideo: boolean;
 };
 
-export type TContact = {
-  id: string;
-  username: string;
-  userAvatartUrl?: string;
-  userCoverUrl?: string;
-  lastMessage: TMessage;
-  status?: {
-    viewed?: boolean;
-  };
-};
+// export type TContact = {
+//   id: number;
+//   username: string;
+//   userAvatartUrl?: string;
+//   userCoverUrl?: string;
+// };
 
 export type TUser = {
-  id: string;
+  id: number;
   username: string;
-  userAvatarUrl?: string;
-  userCoverUrl?: string;
+  usernameLowerCase: string;
+  userPassword?: string;
   userToken?: string;
   userSocketId?: string;
-  password?: string;
-  online?: boolean;
-  lastConnexion?: string;
+  userProfileUrl?: string;
+  userCoverUrl: string;
+  online: boolean;
   allMessages?: TMessage[];
   stories?: TStory[];
   calls?: TCall[];

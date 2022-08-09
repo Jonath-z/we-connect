@@ -1,6 +1,6 @@
 import CallRoom from "components/modules/CallRoom";
 import ShowWidget from "components/modules/_modules/ShowWidget";
-import { openCallRoomAtom, showChatAtom, userAccountAtom } from "lib/atoms";
+import { openCallRoomAtom, openedChatAtom, userAccountAtom } from "lib/atoms";
 import { useCallContext } from "lib/contexts/CallContext";
 import { gunServices } from "lib/services/gunService";
 import { TUser } from "lib/types";
@@ -14,7 +14,7 @@ interface IProps {
 }
 
 const HomePage: FC<IProps> = ({ user }) => {
-  const [isChatShowed, setIsChatShowed] = useRecoilState(showChatAtom);
+  const [openedChat, setOpenedChat] = useRecoilState(openedChatAtom);
   const callRoom = useRecoilValue(openCallRoomAtom);
   const [userAccount, setUserAccount] = useRecoilState(userAccountAtom);
 
@@ -22,8 +22,6 @@ const HomePage: FC<IProps> = ({ user }) => {
 
   useEffect(() => {
     setUserAccount(user);
-
-    console.log("user from slug", user);
   }, [setUserAccount, user]);
 
   return (
@@ -33,19 +31,24 @@ const HomePage: FC<IProps> = ({ user }) => {
       >
         <div
           className={`w-2/5 h-full overflow-y-auto mobilemd:w-full ${
-            isChatShowed && "-translate-x-full w-full mobile:transition-all"
+            openedChat.isOpened &&
+            "-translate-x-full w-full mobile:transition-all"
           }`}
         >
           <ContactSection />
         </div>
         <div
           className={`${
-            isChatShowed &&
+            openedChat.isOpened &&
             "transition-all mobile:fixed mobile:h-full w-3/5 mx-5 mobile:mx-0 overflow-y-auto mobile:w-full"
           }`}
         >
-          {isChatShowed ? (
-            <ChatSection onRedirectToChat={() => setIsChatShowed(false)} />
+          {openedChat.isOpened ? (
+            <ChatSection
+              onRedirectToChat={() =>
+                setOpenedChat({ ...openedChat, isOpened: false })
+              }
+            />
           ) : (
             <div className="flex justify-center items-center h-full mobile:hidden">
               <p className="bg-white p-2 rounded-2xl shadow-xl font-bold hover:cursor-not-allowed">

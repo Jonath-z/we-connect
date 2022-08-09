@@ -1,4 +1,5 @@
 /* eslint-disable @next/next/no-img-element */
+import TypingSignal from "components/modules/_modules/TypingSignal";
 import {
   VArrowLeft,
   VClose,
@@ -8,24 +9,22 @@ import {
   VVideo,
 } from "components/modules/_modules/vectors";
 import { onlineMarker } from "components/static";
+import { userAccountAtom } from "lib/atoms";
 import { useCallContext } from "lib/contexts/CallContext";
-import React from "react";
+import { useMessage } from "lib/contexts/MessageContext";
+import { TUser } from "lib/types";
+import React, { useCallback, useMemo } from "react";
+import { useRecoilValue } from "recoil";
 
 interface IProps {
-  userAvatarUrl: string;
-  username: string;
-  online: boolean;
-  lastConnexion: string;
+  contact: TUser;
   isChatMenuVisible: boolean;
   onRedirectToChat: () => void;
   onToggleChatMenu: () => void;
 }
 
 const ChatHeader = ({
-  userAvatarUrl,
-  username,
-  online,
-  lastConnexion,
+  contact,
   isChatMenuVisible,
   onRedirectToChat,
   onToggleChatMenu,
@@ -44,21 +43,25 @@ const ChatHeader = ({
           </button>
           <div className="relative">
             <img
-              src={userAvatarUrl}
-              alt={username}
+              src={contact.userProfileUrl}
+              alt={contact.username}
               className="w-12 h-12 object-cover rounded-full"
             />
             <img
               src={onlineMarker.src}
-              alt={username}
+              alt={contact.username}
               className={`w-3 h-3 object-cover rounded-full absolute bottom-0 right-0 ${
-                !online && "hidden"
+                !contact.online && "hidden"
               }`}
             />
           </div>
           <div className="px-2">
-            <p className="font-bold">{username}</p>
-            <p className="text-xs text-gray-500">{lastConnexion}</p>
+            <p className="font-bold">{contact.username}</p>
+            <TypingSignal contact={contact}>
+              <p className="text-xs text-gray-500">
+                Last connection at 10:50am
+              </p>
+            </TypingSignal>
           </div>
         </div>
         <div>

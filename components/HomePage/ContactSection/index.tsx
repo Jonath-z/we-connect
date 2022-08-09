@@ -1,23 +1,35 @@
 import Header from "components/modules/Header";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
-import { bottomNavAtom, showChatAtom } from "lib/atoms";
+import { bottomNavAtom, openedChatAtom, userAccountAtom } from "lib/atoms";
 import BottomNav from "components/modules/BottomNav";
 import Stories from "../../modules/Strories";
 import ContactsContainer from "../../modules/ContactsContainer";
 import Contacts from "../../modules/Contacts";
 import Calls from "components/modules/Calls";
 import Storyview from "components/modules/StoryView";
+import apiServices from "lib/services/apiServices";
+import { TUser } from "lib/types";
 
 const ContactSection = () => {
-  const [isChatShowed, setIsChatShowed] = useRecoilState(showChatAtom);
   const [isSeeAll, setIsSeeAll] = useState(false);
   const [isStoryView, setIsStoryView] = useState(false);
-  const bottomNavSelectedOption = useRecoilValue(bottomNavAtom);
+  const [contacts, setContacts] = useState([]);
 
-  const onOpenChat = () => {
-    setIsChatShowed(true);
-  };
+  const bottomNavSelectedOption = useRecoilValue(bottomNavAtom);
+  const userAccount = useRecoilValue(userAccountAtom);
+
+  useEffect(() => {
+    (async () => {
+      const { response, error } = await apiServices.findAllUser();
+
+      console.log("all users", response);
+
+      setContacts(
+        response.filter((user: TUser) => user.id !== userAccount?.id)
+      );
+    })();
+  }, [userAccount?.id]);
 
   const toggleSeeAll = () => {
     setIsSeeAll(!isSeeAll);
@@ -61,11 +73,11 @@ const ContactSection = () => {
         </div>
       </div>
       {bottomNavSelectedOption.chat && (
-        <ContactsContainer onOpenChat={onOpenChat} isSeeAll={isSeeAll} />
+        <ContactsContainer isSeeAll={isSeeAll} contacts={contacts} />
       )}
-      {bottomNavSelectedOption.contact && <Contacts onOpenChat={onOpenChat} />}
+      {bottomNavSelectedOption.contact && <Contacts contacts={contacts} />}
 
-      {bottomNavSelectedOption.calls && <Calls onOpenChat={onOpenChat} />}
+      {bottomNavSelectedOption.calls && <Calls onOpenChat={() => null} />}
       <div className={`${isSeeAll && "hidden"}`}>
         <BottomNav />
       </div>
