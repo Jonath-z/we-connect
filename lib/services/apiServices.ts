@@ -3,8 +3,13 @@ import http from "./http";
 import { api_endpoints } from "lib/constants";
 import { TUser } from "lib/types";
 
-const { CREATE_USER, UPDATE_USER, GET_USER_BY_TOKEN, GET_ALL_USERS } =
-  api_endpoints;
+const {
+  CREATE_USER,
+  UPDATE_USER,
+  GET_USER_BY_TOKEN,
+  GET_ALL_USERS,
+  GET_ALL_MESSAGES,
+} = api_endpoints;
 
 class ApiService {
   async createUser(user: ICreateUser) {
@@ -65,8 +70,27 @@ class ApiService {
     try {
       const response = await http.get(GET_USER_BY_TOKEN + userToken);
 
+      console.log("user response", response);
+
       return {
         response,
+        error: null,
+      };
+    } catch (err) {
+      console.log("err", err);
+      return {
+        response: null,
+        error: err,
+      };
+    }
+  }
+
+  async findAllMessages() {
+    try {
+      const response = await http.get(GET_ALL_MESSAGES);
+
+      return {
+        response: response.data,
         error: null,
       };
     } catch (err) {

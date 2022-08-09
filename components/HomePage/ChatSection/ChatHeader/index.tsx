@@ -30,6 +30,7 @@ const ChatHeader = ({
   onToggleChatMenu,
 }: IProps) => {
   const { requestCall } = useCallContext();
+  const userAccount = useRecoilValue(userAccountAtom);
 
   return (
     <div className="py-5 bg-light fixed right-0 w-3/5 pr-5 mobile:p-0 mobile:w-full">
@@ -70,7 +71,7 @@ const ChatHeader = ({
               <VSearch />
             </li>
             <li
-              onClick={() => requestCall("audio")}
+              onClick={() => requestCall("audio", contact, userAccount!)}
               role="button"
               onKeyDown={() => null}
               className="mx-2 cursor-pointer"
@@ -78,7 +79,7 @@ const ChatHeader = ({
               <VPhone />
             </li>
             <li
-              onClick={() => requestCall("video")}
+              onClick={() => requestCall("video", contact, userAccount!)}
               role="button"
               onKeyDown={() => null}
               className="mx-2 cursor-pointer"

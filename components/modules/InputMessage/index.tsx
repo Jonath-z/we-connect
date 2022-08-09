@@ -3,12 +3,12 @@ import React, { ChangeEventHandler, useEffect, useRef, useState } from "react";
 import { VAttachement, VMessagevideoCamera, VSend } from "../_modules/vectors";
 import VideoMessageRecorder from "../VideoMessageRecoder";
 import dateServices from "lib/services/dateService";
-import { socket } from "lib/contexts/CallContext";
-import { useRecoilValue } from "recoil";
-import { userAccountAtom } from "lib/atoms";
+import { useRecoilState, useRecoilValue } from "recoil";
+import { messageAtom, userAccountAtom } from "lib/atoms";
 import { useMessage } from "lib/contexts/MessageContext";
 import { TMessage, TUser } from "lib/types";
 import { orderObject } from "lib/helper";
+import cryptoServices from "lib/helper/cryptoServices";
 
 interface IProps {
   contact: TUser;
@@ -19,6 +19,7 @@ const InputMessage = ({ contact }: IProps) => {
   const [isOpenVidepRecorder, setIsOpenVideoRecorder] = useState(false);
   const inputFileRef = useRef<HTMLInputElement>(null);
   const userAccount = useRecoilValue(userAccountAtom);
+  const [messages, setMessages] = useRecoilState(messageAtom);
 
   const { sendMessage, sendTypingMessageSignal } = useMessage();
 
@@ -32,13 +33,13 @@ const InputMessage = ({ contact }: IProps) => {
       receiverId: contact.id,
       isVideo: false,
       isImage: false,
-      message: messageValue,
+      message: cryptoServices.encrypt(messageValue)!,
       date: dateServices.getFullDate(),
       time: dateServices.getTime(),
     };
 
     sendMessage(orderObject(message));
-
+    messages && setMessages([...messages, message]);
     setMessageValue("");
   };
 
@@ -60,11 +61,12 @@ const InputMessage = ({ contact }: IProps) => {
           receiverId: contact.id,
           isVideo: false,
           isImage: true,
-          message: base64ImageString as string,
+          message: cryptoServices.encrypt(base64ImageString as string)!,
           date: dateServices.getFullDate(),
           time: dateServices.getTime(),
         };
         sendMessage(orderObject(message));
+        messages && setMessages([...messages, message]);
       };
     }
   };
@@ -136,6 +138,7 @@ const InputMessage = ({ contact }: IProps) => {
       </div>
       {isOpenVidepRecorder && (
         <VideoMessageRecorder
+          contact={contact}
           isOpenVidepRecorder={isOpenVidepRecorder}
           setIsOpenVideoRecoder={setIsOpenVideoRecorder}
         />

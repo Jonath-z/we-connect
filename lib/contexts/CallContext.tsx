@@ -1,4 +1,5 @@
 import { openCallRoomAtom, userAccountAtom } from "lib/atoms";
+import { TUser } from "lib/types";
 import React, {
   createContext,
   Dispatch,
@@ -6,11 +7,10 @@ import React, {
   useCallback,
   useContext,
   useEffect,
-  useMemo,
   useRef,
   useState,
 } from "react";
-import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 
 import Peer from "simple-peer";
 import { io } from "socket.io-client";
@@ -30,13 +30,13 @@ interface ICallContext {
     video: boolean;
     audio: boolean;
   };
-  inComingCallInfo: {
+  callInfo: {
     from: string;
     to: string;
   };
-  requestCall: (roomType: string) => void;
+  requestCall: (roomType: string, contact: TUser, caller: TUser) => void;
   answerCall: (roomType: string) => void;
-  cancelCall: () => void;
+  cancelCall: (to: string) => void;
 }
 
 const defaultContext: ICallContext = {
@@ -51,7 +51,7 @@ const defaultContext: ICallContext = {
     video: true,
     audio: true,
   },
-  inComingCallInfo: {
+  callInfo: {
     from: "",
     to: "",
   },
@@ -78,7 +78,7 @@ const CallProvider = ({ children }: any) => {
   const [isinComingCall, setIsinComingCall] = useState(false);
   const [callAccepted, setCallAccepted] = useState(false);
 
-  const [inComingCallInfo, setinComingCallInfo] = useState({
+  const [callInfo, setCallInfo] = useState({
     from: "",
     to: "",
     signal: null,
@@ -101,8 +101,6 @@ const CallProvider = ({ children }: any) => {
             audio: true,
           }
     );
-
-    console.log("camera stream when getting media", cameraStream.current);
 
     if (transimittedVideoContainerRef.current) {
       console.log("transmitted stream", cameraStream.current);
@@ -131,6 +129,7 @@ const CallProvider = ({ children }: any) => {
   const stopRinging = () => {
     if (phoneCallAudioRingRef.current) {
       phoneCallAudioRingRef.current.pause();
+      phoneCallAudioRingRef.current.currentTime = 0;
     }
   };
 
@@ -142,7 +141,7 @@ const CallProvider = ({ children }: any) => {
   };
 
   const requestCall = useCallback(
-    async (roomType: string) => {
+    async (roomType: string, contact: TUser, caller: TUser) => {
       openCallRoom({ roomType, isOpened: true });
       const stream = await getMediaSteam(roomType);
       setIsinComingCall(false);
@@ -157,25 +156,25 @@ const CallProvider = ({ children }: any) => {
 
       peer.on("signal", (data) => {
         socket.emit("requestCall", {
-          from: "jonathan",
-          to: "john doe",
+          from: caller.username,
+          to: contact.username,
           signal: data,
           callType: roomType,
+        });
+
+        setCallInfo({
+          from: userAccount?.username!,
+          to: contact.username,
+          signal: null,
         });
       });
 
       peer.on("stream", (currentStream) => {
         if (streamedVideoContainerRef.current)
           streamedVideoContainerRef.current.srcObject = currentStream;
-
-        console.log("request get stream", currentStream);
       });
 
       socket.on("callAccepted", (data) => {
-        console.log(
-          "call signal in request after accepting must be response",
-          data.signal
-        );
         peer.signal(data.signal);
 
         stopRinging();
@@ -189,6 +188,8 @@ const CallProvider = ({ children }: any) => {
   const answerCall = async (roomType: string) => {
     const stream = await getMediaSteam(roomType);
 
+    console.log("answer room type", roomType);
+
     const peer = new Peer({
       initiator: false,
       stream,
@@ -197,8 +198,8 @@ const CallProvider = ({ children }: any) => {
 
     peer.on("signal", (data) => {
       socket.emit("answerCall", {
-        from: "jonathan",
-        to: "john doe",
+        from: userAccount?.username,
+        to: callInfo.from,
         signal: data,
         roomType,
       });
@@ -207,16 +208,10 @@ const CallProvider = ({ children }: any) => {
     peer.on("stream", (currentStream) => {
       if (streamedVideoContainerRef.current)
         streamedVideoContainerRef.current.srcObject = currentStream;
-
-      console.log("current stream in answer", currentStream);
     });
 
-    if (inComingCallInfo.signal) {
-      console.log(
-        "call signal in answer must be request",
-        inComingCallInfo.signal
-      );
-      peer.signal(inComingCallInfo.signal);
+    if (callInfo.signal) {
+      peer.signal(callInfo.signal);
     }
 
     connectionRef.current = peer;
@@ -227,9 +222,8 @@ const CallProvider = ({ children }: any) => {
     openCallRoom({ roomType: "audio" || "video", isOpened: false });
   };
 
-  const cancelCall = () => {
-    console.log("canceled");
-    socket.emit("cancelCall", { from: "jonathan", to: "john doe" });
+  const cancelCall = (to: string) => {
+    socket.emit("cancelCall", { to });
 
     leaveCallRingsHandler();
     closeCallRoom();
@@ -260,39 +254,31 @@ const CallProvider = ({ children }: any) => {
 
   useEffect(() => {
     socket.on("incomingCall", (data) => {
-      console.log("incoming data", data);
-      if (data.to === "john doe") {
-        setIsinComingCall(true);
-        openCallRoom({ roomType: data.callType, isOpened: true });
-        setinComingCallInfo({
-          from: data.from,
-          to: data.to,
-          signal: data.signal,
-        });
-      }
+      setIsinComingCall(true);
+      openCallRoom({ roomType: data.callType, isOpened: true });
+
+      setCallInfo({
+        from: data.from,
+        to: data.to,
+        signal: data.signal,
+      });
 
       if (!callAccepted) {
         navigator.vibrate([400, 400]);
-        console.log("it's vibrating");
       }
     });
 
-    socket.on("leaveCall", (data) => {
-      console.log("leave call data", data);
-
+    socket.on("leaveCall", () => {
       leaveCallRingsHandler();
+      closeCallRoom();
 
-      if (data.to === "john doe") {
-        closeCallRoom();
-
-        if (cameraStream.current) {
-          cameraStream.current
-            .getTracks()
-            .forEach((track: { stop: () => any }) => track.stop());
-        }
-
-        connectionRef.current?.destroy();
+      if (cameraStream.current) {
+        cameraStream.current
+          .getTracks()
+          .forEach((track: { stop: () => any }) => track.stop());
       }
+
+      connectionRef.current?.destroy();
     });
   }, []);
 
@@ -311,13 +297,15 @@ const CallProvider = ({ children }: any) => {
         answerCall,
         setStreamType,
         streamType,
-        inComingCallInfo,
+        callInfo,
       }}
     >
       <audio
         src="/phone-call-ring.wav"
         ref={phoneCallAudioRingRef}
-        onEnded={cancelCall}
+        onEnded={() => {
+          isinComingCall ? cancelCall(callInfo.from) : cancelCall(callInfo.to);
+        }}
         className="hidden"
       />
 

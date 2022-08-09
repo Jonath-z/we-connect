@@ -29,10 +29,6 @@ const CallRoom = ({ roomType, from, to }: IProps) => {
 
   const [isMinified, setIsMinified] = useRecoilState(minifyCallRoomAtom);
 
-  useEffect(() => {
-    console.log("room Type", roomType);
-  }, [roomType]);
-
   const {
     streamedVideoContainerRef,
     transimittedVideoContainerRef,
@@ -194,7 +190,11 @@ const CallRoom = ({ roomType, from, to }: IProps) => {
               )}
 
               {(!isinComingCall || callAccepted) && (
-                <RejectCallButton onClick={cancelCall} />
+                <RejectCallButton
+                  onClick={() => {
+                    isinComingCall ? cancelCall(from) : cancelCall(to);
+                  }}
+                />
               )}
             </li>
 
@@ -203,7 +203,7 @@ const CallRoom = ({ roomType, from, to }: IProps) => {
                 onTouchEnd={(e) => {
                   onTouchend(e);
                   if (patternOutsideview) {
-                    cancelCall();
+                    isinComingCall ? cancelCall(from) : cancelCall(to);
                   }
                 }}
                 onTouchMove={onTouchmouve}

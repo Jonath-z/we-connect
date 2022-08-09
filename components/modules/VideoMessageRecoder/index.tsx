@@ -1,8 +1,9 @@
-import { userAccountAtom } from "lib/atoms";
+import { messageAtom, userAccountAtom } from "lib/atoms";
 import { useMessage } from "lib/contexts/MessageContext";
 import { orderObject } from "lib/helper";
+import cryptoServices from "lib/helper/cryptoServices";
 import dateServices from "lib/services/dateService";
-import { TMessage } from "lib/types";
+import { TMessage, TUser } from "lib/types";
 import React, {
   Dispatch,
   SetStateAction,
@@ -10,17 +11,19 @@ import React, {
   useRef,
   useState,
 } from "react";
-import { useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue } from "recoil";
 import { VPlus, VSend } from "../_modules/vectors";
 
 interface IProps {
   isOpenVidepRecorder: boolean;
   setIsOpenVideoRecoder: Dispatch<SetStateAction<boolean>>;
+  contact: TUser;
 }
 
 const VideoMessageRecoder = ({
   isOpenVidepRecorder,
   setIsOpenVideoRecoder,
+  contact,
 }: IProps) => {
   const [videoLocalLink, setVideoLocalLink] = useState("");
   const [videoBased64String, setVideoBased64Strig] = useState("");
@@ -31,6 +34,7 @@ const VideoMessageRecoder = ({
   const blobRecorded = useRef<any>([]);
 
   const userAccount = useRecoilValue(userAccountAtom);
+  const [messages, setMessages] = useRecoilState(messageAtom);
 
   const { sendMessage } = useMessage();
 
@@ -75,16 +79,17 @@ const VideoMessageRecoder = ({
           const message: TMessage = {
             sender: userAccount?.username!,
             senderId: userAccount?.id!,
-            receiver: "John Doe",
-            receiverId: "zizou_id",
+            receiver: contact.username,
+            receiverId: contact.id,
             isVideo: true,
             isImage: false,
-            message: base64VideoString as string,
+            message: cryptoServices.encrypt(base64VideoString as string)!,
             date: dateServices.getFullDate(),
             time: dateServices.getTime(),
           };
 
           sendMessage(orderObject(message));
+          messages && setMessages([...messages, message]);
 
           setVideoBased64Strig(base64VideoString as string);
         };

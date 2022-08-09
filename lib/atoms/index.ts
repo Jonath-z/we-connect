@@ -1,5 +1,5 @@
 import { atom } from "recoil";
-import { TUser } from "../types";
+import { TMessage, TUser } from "../types";
 
 export const openedChatAtom = atom<{
   contact: TUser | null;
@@ -42,5 +42,10 @@ export const openCallRoomAtom = atom({
 
 export const userAccountAtom = atom<TUser | null>({
   key: "userAccountAtom",
+  default: null,
+});
+
+export const messageAtom = atom<TMessage[] | null>({
+  key: "messageAtom",
   default: null,
 });

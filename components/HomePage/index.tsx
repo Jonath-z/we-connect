@@ -1,11 +1,15 @@
 import CallRoom from "components/modules/CallRoom";
-import ShowWidget from "components/modules/_modules/ShowWidget";
-import { openCallRoomAtom, openedChatAtom, userAccountAtom } from "lib/atoms";
+import {
+  messageAtom,
+  openCallRoomAtom,
+  openedChatAtom,
+  userAccountAtom,
+} from "lib/atoms";
 import { useCallContext } from "lib/contexts/CallContext";
-import { gunServices } from "lib/services/gunService";
+import apiServices from "lib/services/apiServices";
 import { TUser } from "lib/types";
 import React, { FC, useEffect, useState } from "react";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
 import ChatSection from "./ChatSection";
 import ContactSection from "./ContactSection";
 
@@ -17,12 +21,20 @@ const HomePage: FC<IProps> = ({ user }) => {
   const [openedChat, setOpenedChat] = useRecoilState(openedChatAtom);
   const callRoom = useRecoilValue(openCallRoomAtom);
   const [userAccount, setUserAccount] = useRecoilState(userAccountAtom);
-
-  const { inComingCallInfo } = useCallContext();
+  const setMessages = useSetRecoilState(messageAtom);
 
   useEffect(() => {
     setUserAccount(user);
   }, [setUserAccount, user]);
+
+  useEffect(() => {
+    (async () => {
+      const { response } = await apiServices.findAllMessages();
+      setMessages(response);
+    })();
+  }, [setMessages]);
+
+  const { callInfo } = useCallContext();
 
   return (
     <>
@@ -61,8 +73,8 @@ const HomePage: FC<IProps> = ({ user }) => {
       {callRoom.isOpened && (
         <CallRoom
           roomType={callRoom.roomType}
-          from={inComingCallInfo.from}
-          to={inComingCallInfo.to}
+          from={callInfo.from}
+          to={callInfo.to}
         />
       )}
     </>

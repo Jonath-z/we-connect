@@ -1,48 +1,64 @@
 /* eslint-disable @next/next/no-img-element */
-import { userAccountAtom } from "lib/atoms";
 import base64ToObjectUrl from "lib/helper/base64ToObjectUrl";
-import { TMessage } from "lib/types";
+import cryptoServices from "lib/helper/cryptoServices";
+import { TMessage, TUser } from "lib/types";
 import React from "react";
-import { useRecoilValue } from "recoil";
+import ShowWidget from "../../ShowWidget";
 
 interface IProps {
   messages: TMessage;
+  contact: TUser;
 }
 
-const MessageCard = ({ messages }: IProps) => {
-  const { message, time, senderId, isVideo, isImage } = messages;
+const MessageCard = ({ messages, contact }: IProps) => {
+  const { senderId, receiverId, isImage, isVideo, message, time } = messages;
 
-  const userAccount = useRecoilValue(userAccountAtom);
+  console.log("user account", contact);
 
   return (
     <div
       className={`my-2 py-2 px-2 w-fit max-w-xl mobile:max-w-[90%] transition-all break-words flex flex-col ${
-        userAccount?.id === senderId
+        contact?.id === receiverId
           ? "bg-white rounded-t-xl rounded-br-xl"
-          : "from-blue-500 via-sky-600 to-blue-700 bg-gradient-to-tr text-light ml-auto  rounded-t-xl rounded-bl-xl"
+          : contact?.id === senderId &&
+            "from-blue-500 via-sky-600 to-blue-700 bg-gradient-to-tr text-light ml-auto  rounded-t-xl rounded-bl-xl"
       }`}
     >
-      {!isVideo && !isImage && (
+      <ShowWidget condition={!isVideo && !isImage}>
         <p
           className={`text-sm ${
-            userAccount?.id === senderId ? "mr-auto" : "ml-auto"
+            contact?.id === senderId
+              ? "mr-auto"
+              : contact?.id === receiverId && "ml-auto"
           }`}
         >
-          {message}
+          {cryptoServices.decrypt(message)}
         </p>
-      )}
-      {isVideo && (
+      </ShowWidget>
+
+      <ShowWidget condition={isVideo}>
         <video autoPlay={false} controls={true} className="rounded-lg">
-          <source src={base64ToObjectUrl(message)} type="video/webm" />
+          <source
+            src={
+              messages.isVideo
+                ? base64ToObjectUrl(cryptoServices.decrypt(message)!)
+                : ""
+            }
+            type="video/webm"
+          />
         </video>
-      )}
-      {isImage && (
+      </ShowWidget>
+      <ShowWidget condition={isImage}>
         <img
-          src={base64ToObjectUrl(message)}
+          src={
+            messages.isImage
+              ? base64ToObjectUrl(cryptoServices.decrypt(message)!)
+              : ""
+          }
           alt="file-message"
           className="w-80 h-80 object-cover rounded-lg"
         />
-      )}
+      </ShowWidget>
       <p className="text-[10px] py-[2px] ml-auto">{time}</p>
     </div>
   );

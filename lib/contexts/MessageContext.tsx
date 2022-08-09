@@ -1,3 +1,4 @@
+import { messageAtom } from "lib/atoms";
 import { TMessage } from "lib/types";
 import React, {
   createContext,
@@ -6,6 +7,7 @@ import React, {
   useEffect,
   useState,
 } from "react";
+import { useRecoilState } from "recoil";
 import { socket } from "./CallContext";
 
 interface ITypingMessageSignal {
@@ -41,9 +43,12 @@ const MessageProvider = ({ children }: any) => {
     isTyping: false,
   });
 
+  const [messages, setMessages] = useRecoilState(messageAtom);
+
   useEffect(() => {
     socket.on("newMessage", (data) => {
       console.log("message", data);
+      messages && setMessages([...messages, data]);
     });
 
     socket.on("getTypingMessageSignal", (data) => {

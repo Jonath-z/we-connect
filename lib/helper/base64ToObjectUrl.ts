@@ -1,4 +1,5 @@
 const base64ToObjectUrl = (base64String: string) => {
+  console.log("base 64 string", base64String);
   if (base64String) {
     const bytesCharacters = atob(base64String.replace(/^[^,]+,/, ""));
     const bytesNumber = new Array(bytesCharacters.length);

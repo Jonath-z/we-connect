@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { NextPage } from "next";
 import HomePage from "../../components/HomePage";
 import MouveOnScreenProvider from "lib/contexts/MouveOnScreenContext";
@@ -14,6 +14,10 @@ const Home: NextPage<{ user: TUser }> = ({ user }) => {
       window.location.href = "/";
     }
   };
+
+  useEffect(() => {
+    console.log("user from slug", user);
+  }, [user]);
 
   return (
     <>
