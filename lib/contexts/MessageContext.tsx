@@ -47,10 +47,13 @@ const MessageProvider = ({ children }: any) => {
 
   useEffect(() => {
     socket.on("newMessage", (data) => {
-      console.log("message", data);
-      messages && setMessages([...messages, data]);
+      if (messages) {
+        setMessages([...messages, data]);
+      }
     });
+  }, [messages, setMessages]);
 
+  useEffect(() => {
     socket.on("getTypingMessageSignal", (data) => {
       setTypingSignal({
         from: data.from,
