@@ -3,7 +3,7 @@ import base64ToObjectUrl from "lib/helper/base64ToObjectUrl";
 import cryptoServices from "lib/helper/cryptoServices";
 import useClickOutside from "lib/hooks/useClickOutside";
 import { TMessage, TUser } from "lib/types";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import ShowWidget from "../../ShowWidget";
 
 interface IProps {
@@ -15,21 +15,14 @@ interface IProps {
 const MessageCard = ({ messages, contact, userAccount }: IProps) => {
   const { senderId, receiverId, isImage, isVideo, message, time } = messages;
 
-  const [imageFullView, setImageFullView] = useState({
-    display: false,
-    imageUrl: "",
-  });
+  const imageRef = useRef<HTMLImageElement>(null);
+  const [imageFullView, setImageFullView] = useState(false);
 
-  const onToggleImageFullView = (imageUrl: string) => {
-    setImageFullView({
-      display: true,
-      imageUrl,
-    });
+  const onToggleImageFullView = () => {
+    setImageFullView(!imageFullView);
   };
 
-  const ref = useClickOutside(() =>
-    setImageFullView({ ...imageFullView, display: false })
-  );
+  const ref = useClickOutside(() => setImageFullView(false));
 
   return (
     <div className="my-2">
@@ -58,6 +51,7 @@ const MessageCard = ({ messages, contact, userAccount }: IProps) => {
         </ShowWidget>
         <ShowWidget condition={isImage}>
           <img
+            ref={imageRef}
             src={
               messages.isImage
                 ? base64ToObjectUrl(cryptoServices.decrypt(message)!)
@@ -65,26 +59,18 @@ const MessageCard = ({ messages, contact, userAccount }: IProps) => {
             }
             alt="file-message"
             className="w-80 h-80 object-cover rounded-lg"
-            onClick={() =>
-              onToggleImageFullView(
-                base64ToObjectUrl(cryptoServices.decrypt(message)!) || ""
-              )
-            }
+            onClick={onToggleImageFullView}
           />
           <div
             className={`${
-              imageFullView.display
+              imageFullView
                 ? "scale-100 transition-all fixed top-0 bottom-0 left-0 right-0 h-screen w-full bg-black/30 z-20 flex justify-center items-center px-2 backdrop-blur-lg"
                 : "scale-0 hidden transition-all"
             }`}
           >
             <div ref={ref}>
               <img
-                src={
-                  messages.isImage
-                    ? base64ToObjectUrl(cryptoServices.decrypt(message)!)
-                    : ""
-                }
+                src={imageRef.current?.src}
                 alt="file-message"
                 className="w-full h-80 object-cover rounded-lg"
               />
