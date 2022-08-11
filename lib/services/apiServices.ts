@@ -1,7 +1,6 @@
-import { ICreateUser, IUpdateUser } from "lib/models";
+import { ICreateUser, ISaveCall, IUpdateUser } from "lib/models";
 import http from "./http";
 import { api_endpoints } from "lib/constants";
-import { TUser } from "lib/types";
 
 const {
   CREATE_USER,
@@ -9,6 +8,8 @@ const {
   GET_USER_BY_TOKEN,
   GET_ALL_USERS,
   GET_ALL_MESSAGES,
+  SAVE_CALL,
+  DELETE_CALL,
 } = api_endpoints;
 
 class ApiService {
@@ -66,14 +67,12 @@ class ApiService {
     }
   }
 
-  async findUserByTokenId(userToken: string) {
+  async findByTokenOrUsername(userTokenOrUsername: string) {
     try {
-      const response = await http.get(GET_USER_BY_TOKEN + userToken);
-
-      console.log("user response", response);
+      const response = await http.get(GET_USER_BY_TOKEN + userTokenOrUsername);
 
       return {
-        response,
+        response: response.data.user,
         error: null,
       };
     } catch (err) {
@@ -88,6 +87,38 @@ class ApiService {
   async findAllMessages() {
     try {
       const response = await http.get(GET_ALL_MESSAGES);
+
+      return {
+        response: response.data,
+        error: null,
+      };
+    } catch (err) {
+      return {
+        response: null,
+        error: err,
+      };
+    }
+  }
+
+  async savecall(call: ISaveCall) {
+    try {
+      const response = await http.put(SAVE_CALL, call);
+
+      return {
+        response: response.data,
+        error: null,
+      };
+    } catch (err) {
+      return {
+        response: null,
+        error: err,
+      };
+    }
+  }
+
+  async deleteCall(id: number) {
+    try {
+      const response = await http.delete(DELETE_CALL + id);
 
       return {
         response: response.data,

@@ -13,3 +13,13 @@ export interface IUpdateUser {
   userSocketId?: string;
   userCoverUrl?: string;
 }
+
+export interface ISaveCall {
+  username: number;
+  userProfileUrl: string;
+  date: string;
+  time: string;
+  missed: boolean;
+  isIncoming: boolean;
+  isVideo: boolean;
+}

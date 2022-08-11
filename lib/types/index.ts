@@ -22,21 +22,22 @@ export type TStory = {
 };
 
 export type TCall = {
-  id: string;
-  username: string;
-  userAvatarUrl: string;
-  Date: string;
+  id: number;
+  usernameId: number;
+  userProfileUrl: string;
+  date: string;
   time: string;
   missed: boolean;
+  isIncoming: boolean;
   isVideo: boolean;
 };
 
-// export type TContact = {
-//   id: number;
-//   username: string;
-//   userAvatartUrl?: string;
-//   userCoverUrl?: string;
-// };
+export type TContact = {
+  id: number;
+  username: string;
+  userAvatartUrl?: string;
+  userCoverUrl?: string;
+};
 
 export type TUser = {
   id: number;

@@ -1,4 +1,7 @@
 import { openCallRoomAtom, userAccountAtom } from "lib/atoms";
+import { ISaveCall } from "lib/models";
+import apiServices from "lib/services/apiServices";
+import dateServices from "lib/services/dateService";
 import { TUser } from "lib/types";
 import React, {
   createContext,
@@ -82,6 +85,8 @@ const CallProvider = ({ children }: any) => {
     from: "",
     to: "",
     signal: null,
+    missed: true,
+    isVideo: true,
   });
 
   const [streamType, setStreamType] = useState({
@@ -103,7 +108,6 @@ const CallProvider = ({ children }: any) => {
     );
 
     if (transimittedVideoContainerRef.current) {
-      console.log("transmitted stream", cameraStream.current);
       transimittedVideoContainerRef.current.srcObject = cameraStream.current;
     }
 
@@ -140,6 +144,33 @@ const CallProvider = ({ children }: any) => {
     }
   };
 
+  const saveCall = async (
+    missed: boolean,
+    isIncoming: boolean,
+    isVideo: boolean,
+    username: string
+  ) => {
+    const { response, error } = await apiServices.findByTokenOrUsername(
+      username
+    );
+
+    console.log("user response after refactoring", response);
+
+    if (!error) {
+      const call: ISaveCall = {
+        username: response.id,
+        userProfileUrl: response.userProfileUrl,
+        date: dateServices.getFullDate(),
+        time: dateServices.getTime(),
+        missed,
+        isIncoming,
+        isVideo,
+      };
+
+      await apiServices.savecall(call);
+    }
+  };
+
   const requestCall = useCallback(
     async (roomType: string, contact: TUser, caller: TUser) => {
       openCallRoom({ roomType, isOpened: true });
@@ -166,6 +197,8 @@ const CallProvider = ({ children }: any) => {
           from: userAccount?.username!,
           to: contact.username,
           signal: null,
+          missed: true,
+          isVideo: roomType === "video" || false,
         });
       });
 
@@ -176,6 +209,7 @@ const CallProvider = ({ children }: any) => {
 
       socket.on("callAccepted", (data) => {
         peer.signal(data.signal);
+        setCallInfo({ ...callInfo, missed: false });
 
         stopRinging();
       });
@@ -188,13 +222,13 @@ const CallProvider = ({ children }: any) => {
   const answerCall = async (roomType: string) => {
     const stream = await getMediaSteam(roomType);
 
-    console.log("answer room type", roomType);
-
     const peer = new Peer({
       initiator: false,
       stream,
       trickle: false,
     });
+
+    setCallInfo({ ...callInfo, missed: false });
 
     peer.on("signal", (data) => {
       socket.emit("answerCall", {
@@ -222,8 +256,8 @@ const CallProvider = ({ children }: any) => {
     openCallRoom({ roomType: "audio" || "video", isOpened: false });
   };
 
-  const cancelCall = (to: string) => {
-    socket.emit("cancelCall", { to });
+  const cancelCall = async (to: string) => {
+    socket.emit("cancelCall", { to, from: userAccount?.username });
 
     leaveCallRingsHandler();
     closeCallRoom();
@@ -236,6 +270,8 @@ const CallProvider = ({ children }: any) => {
         .getTracks()
         .forEach((track: { stop: () => any }) => track.stop());
     }
+
+    saveCall(callInfo.missed, false, callInfo.isVideo, to);
 
     connectionRef.current?.destroy();
   };
@@ -261,14 +297,18 @@ const CallProvider = ({ children }: any) => {
         from: data.from,
         to: data.to,
         signal: data.signal,
+        missed: true,
+        isVideo: data.callType === "video" || false,
       });
 
       if (!callAccepted) {
         navigator.vibrate([400, 400]);
       }
     });
+  }, []);
 
-    socket.on("leaveCall", () => {
+  useEffect(() => {
+    socket.on("leaveCall", (data) => {
       leaveCallRingsHandler();
       closeCallRoom();
 
@@ -277,6 +317,8 @@ const CallProvider = ({ children }: any) => {
           .getTracks()
           .forEach((track: { stop: () => any }) => track.stop());
       }
+
+      saveCall(!callAccepted, true, callInfo.isVideo, data.from);
 
       connectionRef.current?.destroy();
     });

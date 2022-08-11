@@ -59,7 +59,7 @@ export const getServerSideProps = async (context: {
 }) => {
   const { slug } = context.params;
 
-  const { response, error } = await apiServices.findUserByTokenId(slug);
+  const { response, error } = await apiServices.findByTokenOrUsername(slug);
 
   if (error) {
     return {
@@ -70,7 +70,7 @@ export const getServerSideProps = async (context: {
   } else {
     return {
       props: {
-        user: response?.data.user,
+        user: response,
       },
     };
   }
