@@ -154,10 +154,10 @@ const CallProvider = ({ children }: any) => {
     missed: boolean,
     isIncoming: boolean,
     isVideo: boolean,
-    username: string,
+    callerUsername: string,
     calledUsername: string
   ) => {
-    const callerUser = await apiServices.findByTokenOrUsername(username);
+    const callerUser = await apiServices.findByTokenOrUsername(callerUsername);
 
     const calledUser = await apiServices.findByTokenOrUsername(calledUsername);
 
@@ -177,8 +177,10 @@ const CallProvider = ({ children }: any) => {
         ...outgoingCall,
         username: calledUser.response.id,
         isIncoming: true,
-        calledUsername: username,
+        calledUsername: callerUsername,
       };
+
+      console.log({ outgoingCall, incomingCall });
 
       Promise.all([
         await apiServices.savecall(orderObject(outgoingCall)),
