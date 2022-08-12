@@ -1,4 +1,5 @@
 import { openCallRoomAtom, userAccountAtom } from "lib/atoms";
+import { orderObject } from "lib/helper";
 import { ISaveCall } from "lib/models";
 import apiServices from "lib/services/apiServices";
 import dateServices from "lib/services/dateService";
@@ -40,6 +41,13 @@ interface ICallContext {
   requestCall: (roomType: string, contact: TUser, caller: TUser) => void;
   answerCall: (roomType: string) => void;
   cancelCall: (to: string) => void;
+}
+
+interface ICancelCall {
+  from: string;
+  to: string;
+  callType: string;
+  missed: boolean;
 }
 
 const defaultContext: ICallContext = {
@@ -85,8 +93,6 @@ const CallProvider = ({ children }: any) => {
     from: "",
     to: "",
     signal: null,
-    missed: true,
-    isVideo: true,
   });
 
   const [streamType, setStreamType] = useState({
@@ -148,26 +154,36 @@ const CallProvider = ({ children }: any) => {
     missed: boolean,
     isIncoming: boolean,
     isVideo: boolean,
-    username: string
+    username: string,
+    calledUsername: string
   ) => {
-    const { response, error } = await apiServices.findByTokenOrUsername(
-      username
-    );
+    const callerUser = await apiServices.findByTokenOrUsername(username);
 
-    console.log("user response after refactoring", response);
+    const calledUser = await apiServices.findByTokenOrUsername(calledUsername);
 
-    if (!error) {
-      const call: ISaveCall = {
-        username: response.id,
-        userProfileUrl: response.userProfileUrl,
+    if (!callerUser.error && !calledUser.error) {
+      const outgoingCall: ISaveCall = {
+        username: callerUser.response.id, //must be id (for changing)
+        userProfileUrl: calledUser.response.userProfileUrl,
         date: dateServices.getFullDate(),
         time: dateServices.getTime(),
         missed,
         isIncoming,
         isVideo,
+        calledUsername,
       };
 
-      await apiServices.savecall(call);
+      const incomingCall = {
+        ...outgoingCall,
+        username: calledUser.response.id,
+        isIncoming: true,
+        calledUsername: username,
+      };
+
+      Promise.all([
+        await apiServices.savecall(orderObject(outgoingCall)),
+        await apiServices.savecall(orderObject(incomingCall)),
+      ]);
     }
   };
 
@@ -197,8 +213,6 @@ const CallProvider = ({ children }: any) => {
           from: userAccount?.username!,
           to: contact.username,
           signal: null,
-          missed: true,
-          isVideo: roomType === "video" || false,
         });
       });
 
@@ -209,7 +223,7 @@ const CallProvider = ({ children }: any) => {
 
       socket.on("callAccepted", (data) => {
         peer.signal(data.signal);
-        setCallInfo({ ...callInfo, missed: false });
+        setCallAccepted(true);
 
         stopRinging();
       });
@@ -228,14 +242,11 @@ const CallProvider = ({ children }: any) => {
       trickle: false,
     });
 
-    setCallInfo({ ...callInfo, missed: false });
-
     peer.on("signal", (data) => {
       socket.emit("answerCall", {
         from: userAccount?.username,
         to: callInfo.from,
         signal: data,
-        roomType,
       });
     });
 
@@ -257,7 +268,12 @@ const CallProvider = ({ children }: any) => {
   };
 
   const cancelCall = async (to: string) => {
-    socket.emit("cancelCall", { to, from: userAccount?.username });
+    socket.emit("cancelCall", {
+      to,
+      from: userAccount?.username,
+      callType: callRoomOpened.roomType,
+      missed: !callAccepted,
+    });
 
     leaveCallRingsHandler();
     closeCallRoom();
@@ -271,7 +287,13 @@ const CallProvider = ({ children }: any) => {
         .forEach((track: { stop: () => any }) => track.stop());
     }
 
-    saveCall(callInfo.missed, false, callInfo.isVideo, to);
+    saveCall(
+      !callAccepted,
+      false,
+      callRoomOpened.roomType === "video" || false,
+      userAccount?.username || "",
+      to
+    );
 
     connectionRef.current?.destroy();
   };
@@ -297,8 +319,6 @@ const CallProvider = ({ children }: any) => {
         from: data.from,
         to: data.to,
         signal: data.signal,
-        missed: true,
-        isVideo: data.callType === "video" || false,
       });
 
       if (!callAccepted) {
@@ -308,7 +328,7 @@ const CallProvider = ({ children }: any) => {
   }, []);
 
   useEffect(() => {
-    socket.on("leaveCall", (data) => {
+    socket.on("leaveCall", (data: ICancelCall) => {
       leaveCallRingsHandler();
       closeCallRoom();
 
@@ -317,9 +337,6 @@ const CallProvider = ({ children }: any) => {
           .getTracks()
           .forEach((track: { stop: () => any }) => track.stop());
       }
-
-      saveCall(!callAccepted, true, callInfo.isVideo, data.from);
-
       connectionRef.current?.destroy();
     });
   }, []);
@@ -345,7 +362,7 @@ const CallProvider = ({ children }: any) => {
       <audio
         src="/phone-call-ring.wav"
         ref={phoneCallAudioRingRef}
-        onEnded={() => {
+        onEnded={async () => {
           isinComingCall ? cancelCall(callInfo.from) : cancelCall(callInfo.to);
         }}
         className="hidden"

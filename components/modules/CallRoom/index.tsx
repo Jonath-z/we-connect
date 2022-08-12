@@ -4,6 +4,7 @@ import { useCallContext } from "lib/contexts/CallContext";
 import { useMouveOnScreen } from "lib/contexts/MouveOnScreenContext";
 import React, { useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
+import ShowWidget from "../_modules/ShowWidget";
 import {
   VArrowLeft,
   VArrowMinify,
@@ -173,29 +174,30 @@ const CallRoom = ({ roomType, from, to }: IProps) => {
                 {videoMuted ? <VVideoOff /> : <VVideo />}
               </li>
             )}
-            <li
-              onClick={() => setIsMinified(!isMinified)}
-              className={
-                isMoving
-                  ? "hidden transition-all"
-                  : "bg-blue-600 text-light p-5 rounded-full transition-all"
-              }
-            >
-              {isMinified ? <VZoomOut /> : <VArrowMinify />}
-            </li>
-
+            <ShowWidget condition={callAccepted}>
+              <li
+                onClick={() => setIsMinified(!isMinified)}
+                className={
+                  isMoving
+                    ? "hidden transition-all"
+                    : "bg-blue-600 text-light p-5 rounded-full transition-all"
+                }
+              >
+                {isMinified ? <VZoomOut /> : <VArrowMinify />}
+              </li>
+            </ShowWidget>
             <li className={isMoving ? "hidden transition-all" : ""}>
               {isinComingCall && !callAccepted && (
                 <AcceptCallButton onClick={() => answerCall(roomType)} />
               )}
+            </li>
 
-              {(!isinComingCall || callAccepted) && (
-                <RejectCallButton
-                  onClick={() => {
-                    isinComingCall ? cancelCall(from) : cancelCall(to);
-                  }}
-                />
-              )}
+            <li className={isMoving ? "hidden transition-all" : ""}>
+              <RejectCallButton
+                onClick={() => {
+                  isinComingCall ? cancelCall(from) : cancelCall(to);
+                }}
+              />
             </li>
 
             {isMinified && (

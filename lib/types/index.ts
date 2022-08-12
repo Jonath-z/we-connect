@@ -30,6 +30,7 @@ export type TCall = {
   missed: boolean;
   isIncoming: boolean;
   isVideo: boolean;
+  calledUsername: string;
 };
 
 export type TContact = {

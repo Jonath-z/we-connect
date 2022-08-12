@@ -22,4 +22,5 @@ export interface ISaveCall {
   missed: boolean;
   isIncoming: boolean;
   isVideo: boolean;
+  calledUsername: string;
 }
