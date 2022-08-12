@@ -29,7 +29,7 @@ const Calls = ({ onOpenChat }: IProps) => {
 
   return (
     <div className="w-full h-full relative flex flex-col">
-      <div className="fixed w-2/5 h-full mobile:w-full overflow-y-auto pl-2 py-20 mobilemd:pt-5 mobilemd:pb-[15rem] mobilemd:mt-32 transition-all bg-light mobilemd:rounded-t-3xl ">
+      <div className="fixed w-2/5 h-full mobile:w-full overflow-y-auto py-20 px-2 mobilemd:pt-5 mobilemd:pb-[15rem] mobilemd:mt-32 transition-all bg-light mobilemd:rounded-t-3xl ">
         {userAccount?.calls?.map((call, index) => {
           return (
             <div key={index}>

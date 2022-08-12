@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { user } from "components/assets/dummy_data/user";
 import StoryCard from "components/modules/_modules/Cards/StoryCard";
 import Storyview from "../StoryView";
+import { VPlus } from "../_modules/vectors";
 
 interface IProps {
   isSeeAll: boolean;
@@ -15,7 +16,17 @@ const Stories = ({ isSeeAll, toggleStoryView }: IProps) => {
 
   return (
     <div>
-      <div className={`w-full overflow-x-auto flex ${!isSeeAll && "h-28"}`}>
+      <div
+        className={`w-full overflow-x-auto flex ${
+          !isSeeAll && "h-24"
+        } items-center`}
+      >
+        <div className="flex flex-col items-center ml-2">
+          <div className="w-16 h-16 flex justify-center items-center border-2 border-primary rounded-full">
+            <VPlus className="text-4xl text-white" />
+          </div>
+          <p className="text-xs text-white pt-1 px-2">My story</p>
+        </div>
         {stories.map((story, index) => {
           return (
             <div
