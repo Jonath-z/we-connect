@@ -1,4 +1,6 @@
 /* eslint-disable @next/next/no-img-element */
+import base64ToObjectUrl from "lib/helper/base64ToObjectUrl";
+import { TStory } from "lib/types";
 import React, {
   createRef,
   useCallback,
@@ -9,10 +11,7 @@ import React, {
 import { VClose } from "../_modules/vectors";
 
 interface IProps {
-  story: {
-    storyUrl: string;
-    storyDescription: string;
-  }[];
+  story: TStory[];
   toggleStoryView: () => void;
 }
 
@@ -64,7 +63,7 @@ const Storyview = ({ story, toggleStoryView }: IProps) => {
   }, [story]);
 
   return (
-    <div className="fixed h-screen w-full z-20 top-0">
+    <div className="fixed h-screen w-full top-0 z-20">
       <p
         onClick={toggleStoryView}
         role="button"
@@ -91,13 +90,15 @@ const Storyview = ({ story, toggleStoryView }: IProps) => {
         </div>
       </div>
       <img
-        src={story[currentStoryIndex].storyUrl}
+        src={base64ToObjectUrl(story[currentStoryIndex].storyUrl)}
         alt="story"
         className="h-full w-full object-cover"
       />
-      <p className="z-20 fixed bg-dark bottom-0 w-full text-center text-light py-10 bg-opacity-50 rounded-t-xl backdrop-blur-md text-xs">
-        {story[currentStoryIndex].storyDescription}
-      </p>
+      {story[currentStoryIndex].storyDescription && (
+        <p className="z-20 fixed bg-dark bottom-0 w-full text-center text-light py-10 bg-opacity-50 rounded-t-xl backdrop-blur-md text-xs">
+          {story[currentStoryIndex].storyDescription}
+        </p>
+      )}
     </div>
   );
 };

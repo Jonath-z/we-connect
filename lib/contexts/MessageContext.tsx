@@ -1,4 +1,5 @@
 import { messageAtom } from "lib/atoms";
+import { ISaveStory } from "lib/models";
 import { TMessage } from "lib/types";
 import React, {
   createContext,
@@ -19,12 +20,14 @@ interface ITypingMessageSignal {
 interface IMessageContext {
   sendMessage: (message: TMessage) => void;
   sendTypingMessageSignal: (signal: ITypingMessageSignal) => void;
+  saveStory: (story: ISaveStory) => void;
   typingSignal: ITypingMessageSignal;
 }
 
 const defaultContext: IMessageContext = {
   sendMessage: () => null,
   sendTypingMessageSignal: () => null,
+  saveStory: () => null,
   typingSignal: {
     from: "",
     to: "",
@@ -74,9 +77,13 @@ const MessageProvider = ({ children }: any) => {
     []
   );
 
+  const saveStory = useCallback((story: ISaveStory) => {
+    socket.emit("addStory", story);
+  }, []);
+
   return (
     <MessageContext.Provider
-      value={{ sendMessage, sendTypingMessageSignal, typingSignal }}
+      value={{ sendMessage, sendTypingMessageSignal, typingSignal, saveStory }}
     >
       {children}
     </MessageContext.Provider>

@@ -8,6 +8,10 @@ class DateService {
   getFullDate() {
     return dayjs().format();
   }
+
+  getDateAfter24h() {
+    return dayjs().add(1, "day").format();
+  }
 }
 
 const dateServices = new DateService();

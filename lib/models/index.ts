@@ -14,6 +14,15 @@ export interface IUpdateUser {
   userCoverUrl?: string;
 }
 
+export interface ISaveStory {
+  storyUrl: string;
+  storyDescription: string;
+  storyType: string;
+  expirationDate: string;
+  allowReaction?: boolean;
+  storyOwner: number;
+}
+
 export interface ISaveCall {
   username: number;
   userProfileUrl: string;

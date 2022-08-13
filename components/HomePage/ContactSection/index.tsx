@@ -51,7 +51,7 @@ const ContactSection = () => {
 
   return (
     <div className="w-full h-full relative flex flex-col bg-gradient-to-tr from-blue-400 via-sky-500 to-blue-600">
-      <div className="z-10 py-5 px-2 fixed w-2/5 mobile:w-full text-light">
+      <div className="py-5 px-2 fixed w-2/5 mobile:w-full text-light">
         <Header />
       </div>
       <div className="fixed w-full flex flex-col max-h-full overflow-y-auto my-16">
@@ -69,7 +69,7 @@ const ContactSection = () => {
             isSeeAll ? "h-full overflow-y-auto" : "h-fit"
           } ${!bottomNavSelectedOption.chat && "hidden"} md:hidden`}
         >
-          <Stories isSeeAll={isSeeAll} toggleStoryView={toggleStoryView} />
+          <Stories isSeeAll={isSeeAll} setIsSeeAll={setIsSeeAll} />
         </div>
       </div>
       {bottomNavSelectedOption.chat && (
@@ -81,18 +81,6 @@ const ContactSection = () => {
       <div className={`${isSeeAll && "hidden"}`}>
         <BottomNav />
       </div>
-      {isStoryView && (
-        <Storyview
-          story={[
-            {
-              storyUrl:
-                "https://static1.makeuseofimages.com/wordpress/wp-content/uploads/2022/03/bored-ape-nft.jpg",
-              storyDescription: "This is we connect story",
-            },
-          ]}
-          toggleStoryView={toggleStoryView}
-        />
-      )}
     </div>
   );
 };

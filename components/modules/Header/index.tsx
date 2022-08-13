@@ -37,7 +37,7 @@ const Header = () => {
         <div className="hidden mobilemd:block">
           <VSearch />
         </div>
-        <div className="w-full flex bg-gray-100 mx-5 py-1 px-3  items-center mobilemd:hidden">
+        <div className="w-full flex bg-gray-100 mx-5 py-1 px-3 items-center mobilemd:hidden">
           <input
             onFocus={onInputSeachFocus}
             onBlur={onInputSearchBlur}

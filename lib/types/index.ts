@@ -17,7 +17,6 @@ export type TStory = {
   storyDescription?: string;
   storyType?: string;
   expirationDate: string;
-  filter: null;
   allowReaction?: boolean;
 };
 
